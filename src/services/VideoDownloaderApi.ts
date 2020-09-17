@@ -1,5 +1,5 @@
 // const VIDEO_DOWNLOADER_API_URL = "https://webhook.site/53bc3b04-0bb1-4716-baef-43dc45c32463"
-const VIDEO_DOWNLOADER_API_URL = "http://localhost:8000"
+const VIDEO_DOWNLOADER_API_URL = "https://api.video.home.ruchij.com"
 
 export const videoExists =
     (url: string): Promise<Boolean> =>
