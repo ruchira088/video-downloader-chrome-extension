@@ -1,7 +1,7 @@
 import {VideoSite} from "../models/VideoSite"
-import {videoExists, scheduleVideo} from "../services/VideoDownloaderApi"
+import {scheduleVideo, videoExists} from "../services/VideoDownloaderApi"
 import {Maybe} from "monet";
-import PornOneVideoSiteHandler from "./PornOneVideoSiteHandler";
+import pornOneVideoSiteHandler from "./PornOneVideoSiteHandler";
 
 export interface VideoSiteHandler<A extends VideoSite> {
     videoSite: A
@@ -12,7 +12,7 @@ export interface VideoSiteHandler<A extends VideoSite> {
 }
 
 export const videoSiteHandlers: VideoSiteHandler<VideoSite>[] =
-    [PornOneVideoSiteHandler]
+    [pornOneVideoSiteHandler]
 
 export const createButton =
     (document: Document): HTMLButtonElement => {
@@ -29,14 +29,25 @@ export const addButtonFunctionality =
             .then(exists => {
                 if (exists) {
                     downloadButton.textContent = "Already scheduled"
-                    downloadButton.disabled = true
                     return
                 } else {
                     downloadButton.textContent = "Download"
+                    downloadButton.disabled = false
+
                     downloadButton.onclick = () => {
                         downloadButton.disabled = true
 
                         return scheduleVideo(url).then(() => addButtonFunctionality(downloadButton, url))
                     }
                 }
+            })
+            .catch(({errorMessages}: { errorMessages: string[] | undefined }) => {
+                downloadButton.textContent = "Error"
+
+                const errorSection = document.createElement("span")
+                errorSection.style.marginLeft = "1em"
+                errorSection.textContent =
+                    Maybe.fromFalsy(errorMessages).map(messages => messages.join(", ")).orJust("Unknown error")
+
+                Maybe.fromFalsy(downloadButton.parentElement).forEach(parent => parent.appendChild(errorSection))
             })

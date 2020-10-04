@@ -8,5 +8,10 @@
       "matches": [ "https://pornone.com/*" ],
       "js": [ "content.bundle.js" ]
     }
+  ],
+  "permissions": [
+    "cookies",
+    "*://localhost/*",
+    "*://*.ruchij.com/*"
   ]
 }
