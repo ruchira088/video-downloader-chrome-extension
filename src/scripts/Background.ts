@@ -1,4 +1,4 @@
-import cookieStore, {CookieStore} from "../kv-store/CookieStore"
+import retrieveCookieStore, {CookieStore} from "../kv-store/CookieStore"
 import storageAreaKeyValueStore from "../kv-store/StorageAreaKeyValueStore"
 import {StorageKey} from "../kv-store/StorageKey";
 import {KeyValueStore} from "../kv-store/KeyValueStore";
@@ -12,6 +12,6 @@ const initialize =
             .then(cookie => keyValueStore.put(StorageKey.AuthenticationCookie, cookie.value))
             .then(() => console.log("Authentication token persisted to Key-Value store"))
 
-cookieStore()
+retrieveCookieStore()
     .then(store => initialize(store, storageAreaKeyValueStore()))
     .catch(error => console.log(error))

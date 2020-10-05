@@ -22,9 +22,9 @@ class ChromeCookieStore implements CookieStore {
     }
 }
 
-const cookieStore: () => Promise<CookieStore> =
+const retrieveCookieStore: () => Promise<CookieStore> =
     () =>
         storageAreaKeyValueStore().get(StorageKey.ApiServerUrl)
             .then(result => result.map(apiServerUrl => Promise.resolve(new ChromeCookieStore(apiServerUrl))).orLazy(() => Promise.reject(ApiUrlUndefinedException)))
 
-export default cookieStore
+export default retrieveCookieStore
