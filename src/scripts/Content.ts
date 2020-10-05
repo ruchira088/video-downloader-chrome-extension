@@ -1,63 +1,49 @@
-import { videoSiteHandlers } from "../handlers/VideoSiteHandler";
-import { Maybe } from "monet";
-import videoDownloaderApi, {
-  VideoDownloaderApi,
-} from "../services/VideoDownloaderApi";
+import { videoSiteHandlers } from "../handlers/VideoSiteHandler"
+import { Maybe } from "monet"
+import videoDownloaderApi, { VideoDownloaderApi } from "../services/VideoDownloaderApi"
 
 window.onload = () => {
-  const url = window.location.href;
+  const url = window.location.href
 
   Maybe.fromNull(
-    videoSiteHandlers.find((videoSiteHandler) =>
-      url.startsWith(`https://${videoSiteHandler.videoSite.toLowerCase()}`)
-    )
+    videoSiteHandlers.find((videoSiteHandler) => url.startsWith(`https://${videoSiteHandler.videoSite.toLowerCase()}`))
   ).forEach((videoSiteHandler) => {
     if (videoSiteHandler.isVideoPage(document)) {
-      const downloadButton = createButton(document);
-      downloadButton.disabled = true;
+      const downloadButton = createButton(document)
+      downloadButton.disabled = true
 
-      videoSiteHandler
-        .buttonContainer(document)
-        .forEach((container) => container.appendChild(downloadButton));
+      videoSiteHandler.buttonContainer(document).forEach((container) => container.appendChild(downloadButton))
 
-      initializeElements(downloadButton, url);
+      initializeElements(downloadButton, url)
     }
-  });
-};
+  })
+}
 
 export const createButton = (document: Document): HTMLButtonElement => {
-  const downloadButton = document.createElement("button");
-  downloadButton.id = "download-video-button";
-  downloadButton.textContent = "Checking";
+  const downloadButton = document.createElement("button")
+  downloadButton.id = "download-video-button"
+  downloadButton.textContent = "Checking"
 
-  return downloadButton;
-};
+  return downloadButton
+}
 
-const initializeDownloadButton = (
-  api: VideoDownloaderApi,
-  downloadButton: HTMLButtonElement,
-  videoUrl: string
-) =>
+const initializeDownloadButton = (api: VideoDownloaderApi, downloadButton: HTMLButtonElement, videoUrl: string) =>
   api
     .videoExistsByUrl(videoUrl)
     .then((exists) => {
       if (exists) {
-        downloadButton.textContent = "Already scheduled";
-        downloadButton.disabled = true;
-        return;
+        downloadButton.textContent = "Already scheduled"
+        downloadButton.disabled = true
+        return
       } else {
-        downloadButton.textContent = "Download";
-        downloadButton.disabled = false;
+        downloadButton.textContent = "Download"
+        downloadButton.disabled = false
 
         downloadButton.onclick = () => {
-          downloadButton.disabled = true;
+          downloadButton.disabled = true
 
-          return api
-            .scheduleVideoDownload(videoUrl)
-            .then(() =>
-              initializeDownloadButton(api, downloadButton, videoUrl)
-            );
-        };
+          return api.scheduleVideoDownload(videoUrl).then(() => initializeDownloadButton(api, downloadButton, videoUrl))
+        }
       }
     })
     .catch(({ errorMessages }: { errorMessages: string[] | undefined }) =>
@@ -68,32 +54,27 @@ const initializeDownloadButton = (
             .orJust("Unknown error")
         )
       )
-    );
+    )
 
-export const initializeElements = (
-  downloadButton: HTMLButtonElement,
-  url: string
-): Promise<void> =>
+export const initializeElements = (downloadButton: HTMLButtonElement, url: string): Promise<void> =>
   videoDownloaderApi()
     .then((api) =>
       api
         .videoExistsByUrl(url)
         .then((exists) => {
           if (exists) {
-            downloadButton.textContent = "Already scheduled";
-            downloadButton.disabled = true;
-            return;
+            downloadButton.textContent = "Already scheduled"
+            downloadButton.disabled = true
+            return
           } else {
-            downloadButton.textContent = "Download";
-            downloadButton.disabled = false;
+            downloadButton.textContent = "Download"
+            downloadButton.disabled = false
 
             downloadButton.onclick = () => {
-              downloadButton.disabled = true;
+              downloadButton.disabled = true
 
-              return api
-                .scheduleVideoDownload(url)
-                .then(() => initializeElements(downloadButton, url));
-            };
+              return api.scheduleVideoDownload(url).then(() => initializeElements(downloadButton, url))
+            }
           }
         })
         .catch(({ errorMessages }: { errorMessages: string[] | undefined }) =>
@@ -107,14 +88,12 @@ export const initializeElements = (
         )
     )
     .catch((error) => {
-      downloadButton.textContent = "Error";
-      downloadButton.disabled = true;
+      downloadButton.textContent = "Error"
+      downloadButton.disabled = true
 
-      const errorSection = document.createElement("span");
-      errorSection.style.marginLeft = "1em";
-      errorSection.textContent = error;
+      const errorSection = document.createElement("span")
+      errorSection.style.marginLeft = "1em"
+      errorSection.textContent = error
 
-      Maybe.fromFalsy(downloadButton.parentElement).forEach((parent) =>
-        parent.appendChild(errorSection)
-      );
-    });
+      Maybe.fromFalsy(downloadButton.parentElement).forEach((parent) => parent.appendChild(errorSection))
+    })

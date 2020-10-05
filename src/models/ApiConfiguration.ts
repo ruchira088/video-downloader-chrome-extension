@@ -1,4 +1,4 @@
 export interface ApiConfiguration {
-  url: string;
-  authenticationToken: string;
+  url: string
+  authenticationToken: string
 }

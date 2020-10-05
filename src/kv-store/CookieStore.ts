@@ -1,11 +1,11 @@
-import { Maybe } from "monet";
-import storageAreaKeyValueStore from "./StorageAreaKeyValueStore";
-import { StorageKey } from "./StorageKey";
-import { ApiUrlUndefinedException } from "../errors/Errors";
-import Cookie = chrome.cookies.Cookie;
+import { Maybe } from "monet"
+import storageAreaKeyValueStore from "./StorageAreaKeyValueStore"
+import { StorageKey } from "./StorageKey"
+import { ApiUrlUndefinedException } from "../errors/Errors"
+import Cookie = chrome.cookies.Cookie
 
 export interface CookieStore {
-  get(key: string): Promise<Maybe<Cookie>>;
+  get(key: string): Promise<Maybe<Cookie>>
 }
 
 class ChromeCookieStore implements CookieStore {
@@ -16,7 +16,7 @@ class ChromeCookieStore implements CookieStore {
       chrome.cookies.getAll({ url: this.url }, (result) =>
         resolve(Maybe.fromFalsy(result.find((cookie) => cookie.name === key)))
       )
-    );
+    )
   }
 }
 
@@ -25,10 +25,8 @@ const retrieveCookieStore: () => Promise<CookieStore> = () =>
     .get(StorageKey.ApiServerUrl)
     .then((result) =>
       result
-        .map((apiServerUrl) =>
-          Promise.resolve(new ChromeCookieStore(apiServerUrl))
-        )
+        .map((apiServerUrl) => Promise.resolve(new ChromeCookieStore(apiServerUrl)))
         .orLazy(() => Promise.reject(ApiUrlUndefinedException))
-    );
+    )
 
-export default retrieveCookieStore;
+export default retrieveCookieStore
