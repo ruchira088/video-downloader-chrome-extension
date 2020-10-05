@@ -1,5 +1,9 @@
 const path = require("path")
 const CopyPlugin = require("copy-webpack-plugin")
+const packageJson = require("./package.json")
+
+const manifestFile =
+  json => ({ name: packageJson.name, version: packageJson.version, description: packageJson.description, ...json })
 
 module.exports = {
   mode: process.env.NODE_ENV || "development",
@@ -7,30 +11,34 @@ module.exports = {
   entry: {
     content: path.resolve(__dirname, "src", "scripts", "Content.ts"),
     "config-page": path.resolve(__dirname, "src", "scripts", "ConfigPage.ts"),
-    background: path.resolve(__dirname, "src", "scripts", "Background.ts"),
+    background: path.resolve(__dirname, "src", "scripts", "Background.ts")
   },
   module: {
     rules: [
       {
         test: /\.([tj])s$/,
         use: "ts-loader",
-        exclude: /node_modules/,
-      },
-    ],
+        exclude: /node_modules/
+      }
+    ]
   },
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".js"]
   },
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "build"),
+    path: path.resolve(__dirname, "build")
   },
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: "src/manifest.json", to: "manifest.json" },
-        { from: "*", context: "src/pages" },
-      ],
-    }),
-  ],
+        {
+          from: "src/manifest.json",
+          to: "manifest.json",
+          transform: content => JSON.stringify(manifestFile(JSON.parse(content)), null, 2)
+        },
+        { from: "*", context: "src/pages" }
+      ]
+    })
+  ]
 }
