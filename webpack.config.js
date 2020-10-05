@@ -3,8 +3,11 @@ const CopyPlugin = require("copy-webpack-plugin")
 
 module.exports = {
     mode: process.env.NODE_ENV || "development",
+    devtool: "inline-source-map",
     entry: {
-        content: path.resolve(__dirname, "src", "Index.ts")
+        content: path.resolve(__dirname, "src", "scripts", "Content.ts"),
+        "config-page": path.resolve(__dirname, "src", "scripts", "ConfigPage.ts"),
+        background: path.resolve(__dirname, "src", "scripts", "Background.ts")
     },
     module: {
         rules: [
@@ -24,7 +27,10 @@ module.exports = {
     },
     plugins: [
         new CopyPlugin({
-            patterns: [ { from: "src/manifest.json", to: "manifest.json" }]
+            patterns: [
+                { from: "src/manifest.json", to: "manifest.json" },
+                { from: "*", context: "src/pages" }
+            ]
         })
     ]
 }

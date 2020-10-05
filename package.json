@@ -5,7 +5,7 @@
   "author": "Ruchira (Richie) Jayasekara <me@ruchij.com>",
   "license": "MIT",
   "scripts": {
-    "build": "GENERATE_SOURCEMAP=false webpack",
+    "build": "webpack",
     "clean": "npx rimraf build"
   },
   "devDependencies": {
