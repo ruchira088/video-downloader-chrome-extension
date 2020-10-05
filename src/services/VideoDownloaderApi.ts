@@ -42,11 +42,11 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
 const apiConfiguration = (keyValueStore: KeyValueStore<string, string>): Promise<ApiConfiguration> =>
     Promise.all([keyValueStore.get(StorageKey.ApiServerUrl), keyValueStore.get(StorageKey.AuthenticationCookie)])
         .then(([apiServerUrlOpt, authenticationCookieOpt]) =>
-            apiServerUrlOpt.fold<Promise<string>>(Promise.reject(ApiUrlUndefinedException))(apiServerUrl => Promise.resolve(apiServerUrl))
-                .then(apiServerUrl => authenticationCookieOpt.fold<Promise<ApiConfiguration>>(Promise.reject(AuthenticationTokenNotFoundException))(authenticationToken => Promise.resolve({
+            apiServerUrlOpt.map(apiServerUrl => Promise.resolve(apiServerUrl)).orLazy(() => Promise.reject(ApiUrlUndefinedException))
+                .then(apiServerUrl => authenticationCookieOpt.map(authenticationToken => Promise.resolve({
                     url: apiServerUrl,
                     authenticationToken
-                })))
+                })).orLazy(() => Promise.reject(AuthenticationTokenNotFoundException)))
         )
 
 export default () => apiConfiguration(storageAreaKeyValueStore()).then(config => new VideoDownloaderApiImpl(config))

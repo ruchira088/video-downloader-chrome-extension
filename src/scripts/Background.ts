@@ -3,12 +3,12 @@ import storageAreaKeyValueStore from "../kv-store/StorageAreaKeyValueStore"
 import {StorageKey} from "../kv-store/StorageKey";
 import {KeyValueStore} from "../kv-store/KeyValueStore";
 import {AuthenticationTokenNotFoundException} from "../errors/Errors";
-import Cookie = chrome.cookies.Cookie;
+
 
 const initialize =
     (store: CookieStore, keyValueStore: KeyValueStore<string, string>) =>
         store.get("authentication")
-            .then(cookieOpt => cookieOpt.fold<Promise<Cookie>>(Promise.reject(AuthenticationTokenNotFoundException))(cookie => Promise.resolve(cookie)))
+            .then(cookieOpt => cookieOpt.map(cookie => Promise.resolve(cookie)).orLazy(() => Promise.reject(AuthenticationTokenNotFoundException)))
             .then(cookie => keyValueStore.put(StorageKey.AuthenticationCookie, cookie.value))
             .then(() => console.log("Authentication token persisted to Key-Value store"))
 
