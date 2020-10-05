@@ -1,4 +1,4 @@
 export enum StorageKey {
-    ApiServerUrl = "ApiServerUrl",
-    AuthenticationCookie = "AuthenticationCookie"
+  ApiServerUrl = "ApiServerUrl",
+  AuthenticationCookie = "AuthenticationCookie",
 }
