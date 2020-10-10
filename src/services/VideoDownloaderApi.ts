@@ -3,35 +3,51 @@ import { StorageKey } from "../kv-store/StorageKey"
 import { ApiConfiguration } from "../models/ApiConfiguration"
 import { ApiUrlUndefinedException, AuthenticationTokenNotFoundException } from "../errors/Errors"
 import { KeyValueStore } from "../kv-store/KeyValueStore"
+import { VideoMetadata } from "../models/VideoMetadata"
+import { parseVideoMetadata } from "../utils/ResponseParser"
 
 export interface VideoDownloaderApi {
   videoExistsByUrl(videoUrl: string): Promise<boolean>
 
   scheduleVideoDownload(videoUrl: string): Promise<boolean>
+
+  gatherVideoMetadata(videoUrl: string): Promise<VideoMetadata>
 }
 
 class VideoDownloaderApiImpl implements VideoDownloaderApi {
-  constructor(readonly apiConfiguration: ApiConfiguration) {}
+  constructor(readonly apiConfiguration: ApiConfiguration) {
+  }
 
   scheduleVideoDownload(videoUrl: string): Promise<boolean> {
     return fetch(`${this.apiConfiguration.url}/schedule`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`,
+        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`
       },
-      body: JSON.stringify({ url: videoUrl }),
-    }).then((response) => response.ok)
+      body: JSON.stringify({ url: videoUrl })
+    }).then((response: Response) => response.ok)
   }
 
   videoExistsByUrl(videoUrl: string): Promise<boolean> {
     return fetch(`${this.apiConfiguration.url}/schedule/search?video-url=${videoUrl}`, {
       headers: {
-        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`,
-      },
+        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`
+      }
     })
       .then((response) => response.json().then((body) => (response.ok ? Promise.resolve(body) : Promise.reject(body))))
       .then((body: { results: object[] }) => body.results.length > 0)
+  }
+
+  gatherVideoMetadata(videoUrl: string): Promise<VideoMetadata> {
+    return fetch(`${this.apiConfiguration.url}/videos/metadata`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`
+      },
+      body: JSON.stringify({ url: videoUrl })
+    }).then((response: Response) => response.json().then(body => response.ok ? Promise.resolve(parseVideoMetadata(body)) : Promise.reject(body)))
   }
 }
 
@@ -46,7 +62,7 @@ const apiConfiguration = (keyValueStore: KeyValueStore<string, string>): Promise
             .map((authenticationToken) =>
               Promise.resolve({
                 url: apiServerUrl,
-                authenticationToken,
+                authenticationToken
               })
             )
             .orLazy(() => Promise.reject(AuthenticationTokenNotFoundException))
