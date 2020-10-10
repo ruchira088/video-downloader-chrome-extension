@@ -37,11 +37,12 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: "src/manifest.json",
+          from: "manifest.json",
           to: "manifest.json",
           transform: (content) => JSON.stringify(manifestFile(JSON.parse(content)), null, 2),
         },
         { from: "*", context: "src/pages" },
+        { from: "icons/*.png" }
       ],
     }),
   ],
