@@ -1,6 +1,8 @@
-import { videoSiteHandlers } from "../handlers/VideoSiteHandler"
 import { Maybe } from "monet"
+import prettyBytes from "pretty-bytes"
+import { videoSiteHandlers } from "../handlers/VideoSiteHandler"
 import videoDownloaderApi, { VideoDownloaderApi } from "../services/VideoDownloaderApi"
+import { VideoMetadata } from "../models/VideoMetadata"
 
 window.onload = () => {
   const url = window.location.href
@@ -27,14 +29,18 @@ export const createButton = (document: Document): HTMLButtonElement => {
   return downloadButton
 }
 
-const initializeDownloadButton = (api: VideoDownloaderApi, downloadButton: HTMLButtonElement, videoUrl: string) =>
+const initializeDownloadButton = (
+  api: VideoDownloaderApi,
+  downloadButton: HTMLButtonElement,
+  videoUrl: string
+): Promise<void> =>
   api
     .videoExistsByUrl(videoUrl)
     .then((exists) => {
       if (exists) {
         downloadButton.textContent = "Already scheduled"
         downloadButton.disabled = true
-        return
+        return Promise.resolve()
       } else {
         downloadButton.textContent = "Download"
         downloadButton.disabled = false
@@ -44,6 +50,11 @@ const initializeDownloadButton = (api: VideoDownloaderApi, downloadButton: HTMLB
 
           return api.scheduleVideoDownload(videoUrl).then(() => initializeDownloadButton(api, downloadButton, videoUrl))
         }
+
+        return api.gatherVideoMetadata(videoUrl).then((videoMetadata: VideoMetadata) => {
+          displayMessage(downloadButton, prettyBytes(videoMetadata.size))
+          return Promise.resolve()
+        })
       }
     })
     .catch(({ errorMessages }: { errorMessages: string[] | undefined }) =>
@@ -58,42 +69,18 @@ const initializeDownloadButton = (api: VideoDownloaderApi, downloadButton: HTMLB
 
 export const initializeElements = (downloadButton: HTMLButtonElement, url: string): Promise<void> =>
   videoDownloaderApi()
-    .then((api) =>
-      api
-        .videoExistsByUrl(url)
-        .then((exists) => {
-          if (exists) {
-            downloadButton.textContent = "Already scheduled"
-            downloadButton.disabled = true
-            return
-          } else {
-            downloadButton.textContent = "Download"
-            downloadButton.disabled = false
-
-            downloadButton.onclick = () => {
-              downloadButton.disabled = true
-
-              return api.scheduleVideoDownload(url).then(() => initializeElements(downloadButton, url))
-            }
-          }
-        })
-        .catch(({ errorMessages }: { errorMessages: string[] | undefined }) =>
-          Promise.reject(
-            new Error(
-              Maybe.fromFalsy(errorMessages)
-                .map((messages) => messages.join(", "))
-                .orJust("Unknown error")
-            )
-          )
-        )
-    )
+    .then((api) => initializeDownloadButton(api, downloadButton, url))
     .catch((error) => {
       downloadButton.textContent = "Error"
       downloadButton.disabled = true
 
-      const errorSection = document.createElement("span")
-      errorSection.style.marginLeft = "1em"
-      errorSection.textContent = error
-
-      Maybe.fromFalsy(downloadButton.parentElement).forEach((parent) => parent.appendChild(errorSection))
+      displayMessage(downloadButton, error)
     })
+
+const displayMessage = (downloadButton: HTMLButtonElement, message: string): Maybe<HTMLElement> => {
+  const messageContainer = document.createElement("span")
+  messageContainer.style.marginLeft = "1em"
+  messageContainer.textContent = message
+
+  return Maybe.fromFalsy(downloadButton.parentElement).map((parent) => parent.appendChild(messageContainer))
+}

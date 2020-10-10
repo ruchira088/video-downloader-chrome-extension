@@ -15,25 +15,24 @@ export interface VideoDownloaderApi {
 }
 
 class VideoDownloaderApiImpl implements VideoDownloaderApi {
-  constructor(readonly apiConfiguration: ApiConfiguration) {
-  }
+  constructor(readonly apiConfiguration: ApiConfiguration) {}
 
   scheduleVideoDownload(videoUrl: string): Promise<boolean> {
     return fetch(`${this.apiConfiguration.url}/schedule`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`
+        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`,
       },
-      body: JSON.stringify({ url: videoUrl })
+      body: JSON.stringify({ url: videoUrl }),
     }).then((response: Response) => response.ok)
   }
 
   videoExistsByUrl(videoUrl: string): Promise<boolean> {
     return fetch(`${this.apiConfiguration.url}/schedule/search?video-url=${videoUrl}`, {
       headers: {
-        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`
-      }
+        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`,
+      },
     })
       .then((response) => response.json().then((body) => (response.ok ? Promise.resolve(body) : Promise.reject(body))))
       .then((body: { results: object[] }) => body.results.length > 0)
@@ -44,10 +43,12 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`
+        Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`,
       },
-      body: JSON.stringify({ url: videoUrl })
-    }).then((response: Response) => response.json().then(body => response.ok ? Promise.resolve(parseVideoMetadata(body)) : Promise.reject(body)))
+      body: JSON.stringify({ url: videoUrl }),
+    }).then((response: Response) =>
+      response.json().then((body) => (response.ok ? Promise.resolve(parseVideoMetadata(body)) : Promise.reject(body)))
+    )
   }
 }
 
@@ -62,7 +63,7 @@ const apiConfiguration = (keyValueStore: KeyValueStore<string, string>): Promise
             .map((authenticationToken) =>
               Promise.resolve({
                 url: apiServerUrl,
-                authenticationToken
+                authenticationToken,
               })
             )
             .orLazy(() => Promise.reject(AuthenticationTokenNotFoundException))

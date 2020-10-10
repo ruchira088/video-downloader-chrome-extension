@@ -12,4 +12,3 @@ export const parseVideoMetadata = (json: any): VideoMetadata => ({
   duration: moment.duration(json.duration.length, json.duration.unit),
   thumbnail: parseFileResource(json.thumbnail),
 })
-

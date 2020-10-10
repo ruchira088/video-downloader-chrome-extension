@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack",
-    "clean": "npx rimraf build"
+    "clean": "npx rimraf build",
+    "clean-build": "yarn clean && yarn build"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.124",
@@ -20,6 +21,7 @@
   },
   "dependencies": {
     "moment": "^2.29.1",
-    "monet": "^0.9.1"
+    "monet": "^0.9.1",
+    "pretty-bytes": "^5.4.1"
   }
 }
