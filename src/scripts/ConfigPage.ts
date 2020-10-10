@@ -17,6 +17,7 @@ const addButtonClickHandler = (
     keyValueStore
       .put(StorageKey.ApiServerUrl, apiServerTextInput.value)
       .then(() => showApiServerUrl(keyValueStore, apiServerTextInput))
+      .then(() => chrome.runtime.sendMessage({}))
   })
 }
 

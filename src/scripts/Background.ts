@@ -15,6 +15,13 @@ const initialize = (store: CookieStore, keyValueStore: KeyValueStore<string, str
     .then((cookie) => keyValueStore.put(StorageKey.AuthenticationCookie, cookie.value))
     .then(() => console.log("Authentication token persisted to Key-Value store"))
 
-retrieveCookieStore()
-  .then((store) => initialize(store, storageAreaKeyValueStore()))
-  .catch((error) => console.log(error))
+const backgroundTask = () =>
+  retrieveCookieStore()
+    .then((store) => initialize(store, storageAreaKeyValueStore()))
+    .catch((error) => console.log(error))
+
+chrome.runtime.onMessage.addListener(() => {
+    backgroundTask()
+})
+
+backgroundTask()

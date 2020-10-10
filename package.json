@@ -6,12 +6,12 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack",
-    "clean": "npx rimraf build",
+    "clean": "rimraf build",
     "clean-build": "yarn clean && yarn build"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.124",
-    "copy-webpack-plugin": "^6.2.0",
+    "copy-webpack-plugin": "^6.2.1",
     "prettier": "2.1.2",
     "rimraf": "^3.0.2",
     "ts-loader": "^8.0.4",
