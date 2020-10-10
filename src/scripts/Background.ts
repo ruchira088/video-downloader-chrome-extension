@@ -21,7 +21,7 @@ const backgroundTask = () =>
     .catch((error) => console.log(error))
 
 chrome.runtime.onMessage.addListener(() => {
-    backgroundTask()
+  backgroundTask()
 })
 
 backgroundTask()
