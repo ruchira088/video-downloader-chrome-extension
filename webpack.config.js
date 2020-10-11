@@ -41,7 +41,7 @@ module.exports = {
           to: "manifest.json",
           transform: (content) => JSON.stringify(manifestFile(JSON.parse(content)), null, 2),
         },
-        { from: "*.html", context: "html" },
+        { from: "*.html", context: "src/html" },
         { from: "icons/*.png" },
       ],
     }),
