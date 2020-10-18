@@ -7,7 +7,8 @@
   "scripts": {
     "build": "webpack",
     "clean": "rimraf build",
-    "clean-build": "yarn clean && yarn build"
+    "clean-build": "yarn clean && yarn build",
+    "prettier": "prettier -w ."
   },
   "devDependencies": {
     "@types/chrome": "^0.0.124",

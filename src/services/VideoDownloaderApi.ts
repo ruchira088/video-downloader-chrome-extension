@@ -29,7 +29,7 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
   }
 
   videoExistsByUrl(videoUrl: string): Promise<boolean> {
-    return fetch(`${this.apiConfiguration.url}/schedule/search?video-url=${videoUrl}`, {
+    return fetch(`${this.apiConfiguration.url}/schedule/search?video-url=${encodeURIComponent(videoUrl)}`, {
       headers: {
         Authorization: `Bearer ${this.apiConfiguration.authenticationToken}`,
       },
