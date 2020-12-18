@@ -7,7 +7,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://pornone.com/*", "https://spankbang.com/*"],
+      "matches": ["https://pornone.com/*", "https://spankbang.com/*", "https://www.eporner.com/*"],
       "js": ["content.bundle.js"]
     }
   ],

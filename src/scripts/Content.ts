@@ -79,7 +79,12 @@ export const initializeElements = (downloadButton: HTMLButtonElement, url: strin
 
 const displayMessage = (downloadButton: HTMLButtonElement, message: string): Maybe<HTMLElement> => {
   const messageContainer = document.createElement("span")
+
   messageContainer.style.marginLeft = "1em"
+  messageContainer.style.color = "white"
+  messageContainer.style.backgroundColor = "grey"
+  messageContainer.style.padding = "0.2em"
+  messageContainer.style.borderRadius = "0.2em"
   messageContainer.textContent = message
 
   return Maybe.fromFalsy(downloadButton.parentElement).map((parent) => parent.appendChild(messageContainer))
