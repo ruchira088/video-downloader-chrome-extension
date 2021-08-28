@@ -4,27 +4,47 @@ import { videoSiteHandlers } from "../handlers/VideoSiteHandler"
 import videoDownloaderApi, { VideoDownloaderApi } from "../services/VideoDownloaderApi"
 import { VideoMetadata } from "../models/VideoMetadata"
 
+const DOWNLOAD_BUTTON_ID = "video-downloader-download-button"
+
 window.onload = () => {
-  const url = window.location.href
-
-  Maybe.fromNull(
-    videoSiteHandlers.find((videoSiteHandler) => url.startsWith(`https://${videoSiteHandler.videoSite.toLowerCase()}`))
-  ).forEach((videoSiteHandler) => {
-    if (videoSiteHandler.isVideoPage(document)) {
-      const downloadButton = createButton(document)
-      downloadButton.disabled = true
-
-      videoSiteHandler.buttonContainer(document).forEach((container) => container.appendChild(downloadButton))
-
-      initializeElements(downloadButton, url)
-    }
-  })
+  setInterval(() => run(document, window.location.href), 5000)
 }
 
-export const createButton = (document: Document): HTMLButtonElement => {
+const run = (document: Document, url: string): Promise<Maybe<boolean>> =>
+  Maybe.fromNull(videoSiteHandlers.find((videoSiteHandler) => url.startsWith(`https://${videoSiteHandler.videoSite.toLowerCase()}`)))
+    .fold<Promise<Maybe<boolean>>>(Promise.resolve(Maybe.None()))(videoSiteHandler => {
+      if (videoSiteHandler.isVideoPage(document) && !alreadyHasDownloadButton(document, url)) {
+        removeDownloadButtonIfExists(document)
+        const downloadButton = createButton(document, url)
+        downloadButton.disabled = true
+
+        videoSiteHandler.buttonContainer(document).forEach((container) => container.appendChild(downloadButton))
+
+        return initializeElements(downloadButton, url).then(() => Maybe.Some(true))
+      } else {
+        return Promise.resolve(Maybe.Some(false))
+      }
+  })
+
+const removeDownloadButtonIfExists =
+  (document: Document) =>
+    Maybe.fromNull(document.getElementById(DOWNLOAD_BUTTON_ID))
+      .map(button => {
+        button.remove()
+        return true
+      })
+      .orJust(false)
+
+const alreadyHasDownloadButton = (document: Document, url: String): boolean =>
+  Maybe.fromNull(document.getElementById(DOWNLOAD_BUTTON_ID))
+    .map(button => button.dataset.url === url)
+    .orJust(false)
+
+export const createButton = (document: Document, url: string): HTMLButtonElement => {
   const downloadButton = document.createElement("button")
-  downloadButton.id = "download-video-button"
+  downloadButton.id = DOWNLOAD_BUTTON_ID
   downloadButton.textContent = "Checking"
+  downloadButton.dataset.url = url
 
   return downloadButton
 }

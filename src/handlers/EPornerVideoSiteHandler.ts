@@ -3,7 +3,7 @@ import { VideoSite } from "../models/VideoSite"
 import { Maybe } from "monet"
 
 export class EPornerVideoSiteHandler implements VideoSiteHandler<VideoSite.EPorner> {
-  buttonContainer(document: Document): Maybe<HTMLElement> {
+  buttonContainer(document: Document): Maybe<Element> {
     return this.videoPlayer(document)
   }
 
@@ -11,11 +11,11 @@ export class EPornerVideoSiteHandler implements VideoSiteHandler<VideoSite.EPorn
     return this.videoPlayer(document).isJust()
   }
 
-  videoPlayer(document: Document): Maybe<HTMLElement> {
+  videoPlayer(document: Document): Maybe<Element> {
     return Maybe.fromFalsy(document.getElementById("video-info"))
   }
 
-  videoSite: VideoSite.EPorner = VideoSite.EPorner
+  videoSite: string = "www.eporner.com"
 }
 
 export default new EPornerVideoSiteHandler()

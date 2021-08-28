@@ -3,7 +3,7 @@ import { VideoSite } from "../models/VideoSite"
 import { Maybe } from "monet"
 
 export class SpankBangVideoSiteHandler implements VideoSiteHandler<VideoSite.SpankBang> {
-  buttonContainer(document: Document): Maybe<HTMLElement> {
+  buttonContainer(document: Document): Maybe<Element> {
     return Maybe.fromNull(document.getElementById("player_wrapper_outer"))
   }
 
@@ -11,7 +11,7 @@ export class SpankBangVideoSiteHandler implements VideoSiteHandler<VideoSite.Spa
     return Maybe.fromNull(document.getElementById("video")).isJust()
   }
 
-  videoSite: VideoSite.SpankBang = VideoSite.SpankBang
+  videoSite: string = "spankbang.com"
 }
 
 export default new SpankBangVideoSiteHandler()
