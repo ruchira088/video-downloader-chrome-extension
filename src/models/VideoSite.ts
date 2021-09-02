@@ -2,5 +2,6 @@ export enum VideoSite {
   PornOne = "PornOne",
   SpankBang = "SpankBang",
   EPorner = "Eporner",
-  YouTube = "YouTube"
+  YouTube = "YouTube",
+  XHamster = "XHamster"
 }
