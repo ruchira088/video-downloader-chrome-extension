@@ -11,13 +11,13 @@
     "prettier": "prettier -w ."
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.154",
+    "@types/chrome": "^0.0.157",
     "copy-webpack-plugin": "^9.0.1",
-    "prettier": "2.3.2",
+    "prettier": "2.4.0",
     "rimraf": "^3.0.2",
     "ts-loader": "^9.2.5",
     "typescript": "^4.4.2",
-    "webpack": "^5.51.1",
+    "webpack": "^5.52.1",
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
