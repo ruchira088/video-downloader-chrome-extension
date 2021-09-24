@@ -10,10 +10,10 @@ window.onload = () => {
   setInterval(() => run(document, window.location.href), 5000)
 }
 
-const run = (document: Document, url: string): Promise<Maybe<boolean>> =>
-  Maybe.fromNull(videoSiteHandlers.find((videoSiteHandler) => url.startsWith(`https://${videoSiteHandler.videoSite.toLowerCase()}`)))
+const run = (document: Document, url: string): Promise<Maybe<boolean>> => {
+  return Maybe.fromNull(videoSiteHandlers.find((videoSiteHandler) => videoSiteHandler.isMatch(new URL(url))))
     .fold<Promise<Maybe<boolean>>>(Promise.resolve(Maybe.None()))(videoSiteHandler => {
-      if (videoSiteHandler.isVideoPage(document) && !alreadyHasDownloadSection(document, url)) {
+      if (videoSiteHandler.isVideoPage(document) && !hasDownloadSection(document, url)) {
         removeDownloadSectionIfExists(document)
         const [downloadSection, downloadButton] = createDownloadSection(document, url)
         downloadButton.disabled = true
@@ -25,7 +25,8 @@ const run = (document: Document, url: string): Promise<Maybe<boolean>> =>
       } else {
         return Promise.resolve(Maybe.Some(false))
       }
-  })
+    })
+}
 
 const removeDownloadSectionIfExists =
   (document: Document) =>
@@ -36,7 +37,7 @@ const removeDownloadSectionIfExists =
       })
       .orJust(false)
 
-const alreadyHasDownloadSection = (document: Document, url: String): boolean =>
+const hasDownloadSection = (document: Document, url: String): boolean =>
   Maybe.fromNull(document.getElementById(DOWNLOAD_SECTION_ID))
     .map(section => section.dataset.url === url)
     .orJust(false)

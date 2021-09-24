@@ -11,7 +11,9 @@ export class SpankBangVideoSiteHandler implements VideoSiteHandler<VideoSite.Spa
     return Maybe.fromNull(document.getElementById("video")).isJust()
   }
 
-  videoSite: string = "spankbang.com"
+  isMatch(url: URL): boolean {
+    return url.hostname === "spankbang.com"
+  }
 }
 
 export default new SpankBangVideoSiteHandler()

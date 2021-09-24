@@ -15,7 +15,9 @@ export class EPornerVideoSiteHandler implements VideoSiteHandler<VideoSite.EPorn
     return Maybe.fromFalsy(document.getElementById("video-info"))
   }
 
-  videoSite: string = "www.eporner.com"
+  isMatch(url: URL): boolean {
+    return url.host === "www.eporner.com"
+  }
 }
 
 export default new EPornerVideoSiteHandler()

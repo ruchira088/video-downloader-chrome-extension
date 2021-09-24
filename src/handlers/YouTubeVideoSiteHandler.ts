@@ -15,7 +15,9 @@ class YouTubeVideoSiteHandler implements VideoSiteHandler<VideoSite.YouTube> {
     return Maybe.fromNull(document.getElementById("ytd-player"))
   }
 
-  videoSite: string = "www.youtube.com/watch"
+  isMatch(url: URL): boolean {
+    return url.toString().startsWith("https://www.youtube.com/watch")
+  }
 }
 
 export default new YouTubeVideoSiteHandler()

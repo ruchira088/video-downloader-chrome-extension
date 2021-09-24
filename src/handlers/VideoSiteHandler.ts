@@ -5,9 +5,10 @@ import SpankBangVideoSiteHandler from "./SpankBangVideoSiteHandler"
 import EPornerVideoSiteHandler from "./EPornerVideoSiteHandler"
 import YouTubeVideoSiteHandler from "./YouTubeVideoSiteHandler"
 import XHamsterVideoSiteHandler from "./XHamsterVideoSiteHandler"
+import OtherVideoSitesHandler from "./OtherVideoSitesHandler"
 
 export interface VideoSiteHandler<A extends VideoSite> {
-  videoSite: string
+  isMatch: (url: URL) => boolean
 
   isVideoPage: (document: Document) => boolean
 
@@ -19,5 +20,6 @@ export const videoSiteHandlers: VideoSiteHandler<VideoSite>[] = [
   SpankBangVideoSiteHandler,
   EPornerVideoSiteHandler,
   YouTubeVideoSiteHandler,
-  XHamsterVideoSiteHandler
+  XHamsterVideoSiteHandler,
+  OtherVideoSitesHandler
 ]

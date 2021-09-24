@@ -11,7 +11,9 @@ class XHamsterVideoSiteHandler implements VideoSiteHandler<VideoSite.XHamster> {
     return Maybe.fromNull(document.getElementById("player-container")).isJust()
   }
 
-  videoSite: string = "xhamster.com/videos"
+  isMatch(url: URL): boolean {
+    return url.toString().startsWith("https://xhamster.com/videos")
+  }
 }
 
 export default new XHamsterVideoSiteHandler()

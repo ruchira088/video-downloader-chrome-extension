@@ -15,7 +15,9 @@ export class PornOneVideoSiteHandler implements VideoSiteHandler<VideoSite.PornO
     return Maybe.fromNull(document.getElementById("video_player"))
   }
 
-  videoSite: string = "pornone.com"
+  isMatch(url: URL): boolean {
+    return url.hostname === "pornone.com"
+  }
 }
 
 export default new PornOneVideoSiteHandler()
