@@ -5,17 +5,16 @@ import { VideoSite } from "../models/VideoSite"
 
 export class OtherVideoSitesHandler implements VideoSiteHandler<VideoSite.Other> {
   buttonContainer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.querySelector("body"))
-      .map(body => {
-        const container = document.createElement("div")
-        body.prepend(container)
+    return Maybe.fromNull(document.querySelector("body")).map((body) => {
+      const container = document.createElement("div")
+      body.prepend(container)
 
-        return container
-      })
+      return container
+    })
   }
 
   isVideoPage(document: Document): boolean {
-    return this.videoPlayer(document).isJust();
+    return this.videoPlayer(document).isJust()
   }
 
   videoPlayer(document: Document): Maybe<HTMLVideoElement> {
@@ -23,7 +22,7 @@ export class OtherVideoSitesHandler implements VideoSiteHandler<VideoSite.Other>
   }
 
   isMatch(url: URL): boolean {
-    return Maybe.fromNull(videoSites.find(hostname => url.host.includes(hostname.toLowerCase()))).isJust()
+    return Maybe.fromNull(videoSites.find((hostname) => url.host.includes(hostname.toLowerCase()))).isJust()
   }
 }
 

@@ -11,35 +11,34 @@ window.onload = () => {
 }
 
 const run = (document: Document, url: string): Promise<Maybe<boolean>> => {
-  return Maybe.fromNull(videoSiteHandlers.find((videoSiteHandler) => videoSiteHandler.isMatch(new URL(url))))
-    .fold<Promise<Maybe<boolean>>>(Promise.resolve(Maybe.None()))(videoSiteHandler => {
-      if (videoSiteHandler.isVideoPage(document) && !hasDownloadSection(document, url)) {
-        removeDownloadSectionIfExists(document)
-        const [downloadSection, downloadButton] = createDownloadSection(document, url)
-        downloadButton.disabled = true
+  return Maybe.fromNull(videoSiteHandlers.find((videoSiteHandler) => videoSiteHandler.isMatch(new URL(url)))).fold<
+    Promise<Maybe<boolean>>
+  >(Promise.resolve(Maybe.None()))((videoSiteHandler) => {
+    if (videoSiteHandler.isVideoPage(document) && !hasDownloadSection(document, url)) {
+      removeDownloadSectionIfExists(document)
+      const [downloadSection, downloadButton] = createDownloadSection(document, url)
+      downloadButton.disabled = true
 
-        videoSiteHandler.buttonContainer(document)
-          .forEach((container) => container.appendChild(downloadSection))
+      videoSiteHandler.buttonContainer(document).forEach((container) => container.appendChild(downloadSection))
 
-        return initializeElements(downloadSection, downloadButton, url).then(() => Maybe.Some(true))
-      } else {
-        return Promise.resolve(Maybe.Some(false))
-      }
-    })
+      return initializeElements(downloadSection, downloadButton, url).then(() => Maybe.Some(true))
+    } else {
+      return Promise.resolve(Maybe.Some(false))
+    }
+  })
 }
 
-const removeDownloadSectionIfExists =
-  (document: Document) =>
-    Maybe.fromNull(document.getElementById(DOWNLOAD_SECTION_ID))
-      .map(section => {
-        section.remove()
-        return true
-      })
-      .orJust(false)
+const removeDownloadSectionIfExists = (document: Document) =>
+  Maybe.fromNull(document.getElementById(DOWNLOAD_SECTION_ID))
+    .map((section) => {
+      section.remove()
+      return true
+    })
+    .orJust(false)
 
 const hasDownloadSection = (document: Document, url: String): boolean =>
   Maybe.fromNull(document.getElementById(DOWNLOAD_SECTION_ID))
-    .map(section => section.dataset.url === url)
+    .map((section) => section.dataset.url === url)
     .orJust(false)
 
 export const createDownloadSection = (document: Document, url: string): [HTMLDivElement, HTMLButtonElement] => {
@@ -75,7 +74,8 @@ const initializeDownloadButton = (
         downloadButton.onclick = () => {
           downloadButton.disabled = true
 
-          return api.scheduleVideoDownload(videoUrl)
+          return api
+            .scheduleVideoDownload(videoUrl)
             .then(() => initializeDownloadButton(api, downloadSection, downloadButton, videoUrl))
         }
 
@@ -95,7 +95,11 @@ const initializeDownloadButton = (
       )
     )
 
-export const initializeElements = (downloadSection: HTMLDivElement, downloadButton: HTMLButtonElement, url: string): Promise<void> =>
+export const initializeElements = (
+  downloadSection: HTMLDivElement,
+  downloadButton: HTMLButtonElement,
+  url: string
+): Promise<void> =>
   videoDownloaderApi()
     .then((api) => initializeDownloadButton(api, downloadSection, downloadButton, url))
     .catch((error) => {

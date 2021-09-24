@@ -4,7 +4,7 @@ import { Maybe } from "monet"
 
 class XHamsterVideoSiteHandler implements VideoSiteHandler<VideoSite.XHamster> {
   buttonContainer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.querySelector(".controls"));
+    return Maybe.fromNull(document.querySelector(".controls"))
   }
 
   isVideoPage(document: Document): boolean {

@@ -21,5 +21,5 @@ export const videoSiteHandlers: VideoSiteHandler<VideoSite>[] = [
   EPornerVideoSiteHandler,
   YouTubeVideoSiteHandler,
   XHamsterVideoSiteHandler,
-  OtherVideoSitesHandler
+  OtherVideoSitesHandler,
 ]

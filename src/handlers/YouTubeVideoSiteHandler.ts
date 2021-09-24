@@ -11,7 +11,7 @@ class YouTubeVideoSiteHandler implements VideoSiteHandler<VideoSite.YouTube> {
     return this.videoPlayer(document).isJust()
   }
 
-  videoPlayer(document: Document): Maybe<Element>  {
+  videoPlayer(document: Document): Maybe<Element> {
     return Maybe.fromNull(document.getElementById("ytd-player"))
   }
 

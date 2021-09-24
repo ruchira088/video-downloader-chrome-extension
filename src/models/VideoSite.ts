@@ -4,5 +4,5 @@ export enum VideoSite {
   EPorner = "Eporner",
   YouTube = "YouTube",
   XHamster = "XHamster",
-  Other = "Other"
+  Other = "Other",
 }
