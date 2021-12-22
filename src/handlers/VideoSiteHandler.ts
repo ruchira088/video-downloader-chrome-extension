@@ -6,6 +6,7 @@ import EPornerVideoSiteHandler from "./EPornerVideoSiteHandler"
 import YouTubeVideoSiteHandler from "./YouTubeVideoSiteHandler"
 import XHamsterVideoSiteHandler from "./XHamsterVideoSiteHandler"
 import OtherVideoSitesHandler from "./OtherVideoSitesHandler"
+import XFreeHdVideoSiteHandler from "./XFreeHdVideoSiteHandler";
 
 export interface VideoSiteHandler<A extends VideoSite> {
   isMatch: (url: URL) => boolean
@@ -21,5 +22,6 @@ export const videoSiteHandlers: VideoSiteHandler<VideoSite>[] = [
   EPornerVideoSiteHandler,
   YouTubeVideoSiteHandler,
   XHamsterVideoSiteHandler,
+  XFreeHdVideoSiteHandler,
   OtherVideoSitesHandler,
 ]
