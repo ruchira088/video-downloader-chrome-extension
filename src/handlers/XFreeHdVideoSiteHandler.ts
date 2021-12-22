@@ -16,7 +16,7 @@ export class XFreeHdVideoSiteHandler implements VideoSiteHandler<VideoSite.XFree
   }
 
   videoPlayer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.querySelector(".video-container #hdPlayer"))
+    return Maybe.fromNull(document.querySelector(".video-container"))
   }
 }
 
