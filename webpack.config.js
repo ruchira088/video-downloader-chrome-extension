@@ -15,7 +15,7 @@ module.exports = {
   entry: {
     content: path.resolve(__dirname, "src", "scripts", "Content.ts"),
     "config-page": path.resolve(__dirname, "src", "scripts", "ConfigPage.ts"),
-    background: path.resolve(__dirname, "src", "scripts", "Background.ts"),
+    "service-worker": path.resolve(__dirname, "src", "scripts", "ServiceWorker.ts"),
   },
   module: {
     rules: [

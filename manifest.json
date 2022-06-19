@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "icons": {
     "16": "icons/16x16.png",
     "48": "icons/48x48.png",
@@ -11,11 +11,12 @@
       "js": ["content.bundle.js"]
     }
   ],
-  "permissions": ["storage", "cookies", "*://localhost/*", "*://*.ruchij.com/*"],
-  "browser_action": {
+  "permissions": ["storage", "cookies"],
+  "host_permissions": ["*://localhost/*", "*://*.localhost/*", "*://*.ruchij.com/*"],
+  "action": {
     "default_popup": "config-page.html"
   },
   "background": {
-    "scripts": ["background.bundle.js"]
+    "service_worker": "service-worker.bundle.js"
   }
 }
