@@ -1,0 +1,40 @@
+#video-downloader {
+  margin-top: 1em;
+
+  button {
+    background-color: white;
+    color: black;
+    border-color: black;
+    padding: 0.5em;
+    border-radius: 0.2em;
+    cursor: not-allowed;
+
+    &.download {
+      cursor: pointer;
+      transition: all 0.4s ease;
+
+      &:hover {
+        background-color: darkgray;
+      }
+    }
+
+    &.checking {
+
+    }
+
+    &.scheduled {
+
+    }
+  }
+
+  .message-board {
+    font-size: 12px;
+    margin-left: 1em;
+    padding: 0.5em;
+    border-radius: 0.2em;
+    border: black solid 0.25em;
+
+    background-color: white;
+    color: black;
+  }
+}

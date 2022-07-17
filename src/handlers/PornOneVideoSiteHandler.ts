@@ -4,7 +4,7 @@ import { Maybe } from "monet"
 
 export class PornOneVideoSiteHandler implements VideoSiteHandler<VideoSite.PornOne> {
   buttonContainer(document: Document): Maybe<Element> {
-    return this.videoPlayer(document)
+    return this.videoPlayer(document).flatMap(element => Maybe.fromNull(element.parentElement))
   }
 
   isVideoPage(document: Document): boolean {
@@ -12,7 +12,7 @@ export class PornOneVideoSiteHandler implements VideoSiteHandler<VideoSite.PornO
   }
 
   videoPlayer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.getElementById("video_player"))
+    return Maybe.fromNull(document.getElementById("pornone-video-player"))
   }
 
   isMatch(url: URL): boolean {

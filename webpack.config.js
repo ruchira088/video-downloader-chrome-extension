@@ -15,7 +15,7 @@ module.exports = {
   entry: {
     content: path.resolve(__dirname, "src", "scripts", "Content.ts"),
     "config-page": path.resolve(__dirname, "src", "scripts", "ConfigPage.ts"),
-    "service-worker": path.resolve(__dirname, "src", "scripts", "ServiceWorker.ts"),
+    "service-worker": path.resolve(__dirname, "src", "scripts", "ServiceWorker.ts")
   },
   module: {
     rules: [
@@ -24,6 +24,19 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              outputPath: "styles/",
+              name: "[name].css"
+            }
+          },
+          "sass-loader"
+        ]
+      }
     ],
   },
   resolve: {
@@ -32,6 +45,7 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "build"),
+    publicPath: ""
   },
   plugins: [
     new CopyPlugin({
@@ -42,7 +56,8 @@ module.exports = {
           transform: (content) => JSON.stringify(manifestFile(JSON.parse(content)), null, 2),
         },
         { from: "*.html", context: "src/html" },
-        { from: "icons/*.png" },
+        { from: "icons/*" },
+        { from: "images/*" }
       ],
     }),
   ],

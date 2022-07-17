@@ -5,7 +5,6 @@ import SpankBangVideoSiteHandler from "./SpankBangVideoSiteHandler"
 import EPornerVideoSiteHandler from "./EPornerVideoSiteHandler"
 import YouTubeVideoSiteHandler from "./YouTubeVideoSiteHandler"
 import XHamsterVideoSiteHandler from "./XHamsterVideoSiteHandler"
-import OtherVideoSitesHandler from "./OtherVideoSitesHandler"
 import XFreeHdVideoSiteHandler from "./XFreeHdVideoSiteHandler"
 
 export interface VideoSiteHandler<A extends VideoSite> {
@@ -22,6 +21,5 @@ export const videoSiteHandlers: VideoSiteHandler<VideoSite>[] = [
   EPornerVideoSiteHandler,
   YouTubeVideoSiteHandler,
   XHamsterVideoSiteHandler,
-  XFreeHdVideoSiteHandler,
-  OtherVideoSitesHandler,
+  XFreeHdVideoSiteHandler
 ]

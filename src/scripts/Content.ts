@@ -4,7 +4,9 @@ import { videoSiteHandlers } from "../handlers/VideoSiteHandler"
 import videoDownloaderApi, { VideoDownloaderApi } from "../services/VideoDownloaderApi"
 import { VideoMetadata } from "../models/VideoMetadata"
 
-const DOWNLOAD_SECTION_ID = "video-downloader-download-section"
+import "../styles/content.scss"
+
+const DOWNLOAD_SECTION_ID = "video-downloader"
 
 window.onload = () => {
   setInterval(() => run(document, window.location.href), 5000)
@@ -50,6 +52,7 @@ export const createDownloadSection = (document: Document, url: string): [HTMLDiv
   downloadSection.appendChild(downloadButton)
 
   downloadButton.textContent = "Checking"
+  downloadButton.className = "checking"
 
   return [downloadSection, downloadButton]
 }
@@ -65,11 +68,17 @@ const initializeDownloadButton = (
     .then((exists) => {
       if (exists) {
         downloadButton.textContent = "Already scheduled"
+        downloadButton.className = "scheduled"
         downloadButton.disabled = true
+
         return Promise.resolve()
       } else {
         downloadButton.textContent = "Download"
+        downloadButton.className = "download"
         downloadButton.disabled = false
+
+        const downloadIcon = chrome.runtime.getURL("images/download-icon.svg")
+        // downloadButton.style.backgroundImage = `url('${downloadIcon}')`
 
         downloadButton.onclick = () => {
           downloadButton.disabled = true
@@ -111,12 +120,7 @@ export const initializeElements = (
 
 const displayMessage = (downloadSection: HTMLDivElement, message: string): HTMLElement => {
   const messageContainer = document.createElement("span")
-
-  messageContainer.style.marginLeft = "1em"
-  messageContainer.style.color = "white"
-  messageContainer.style.backgroundColor = "grey"
-  messageContainer.style.padding = "0.2em"
-  messageContainer.style.borderRadius = "0.2em"
+  messageContainer.className = "message-board"
   messageContainer.textContent = message
 
   return downloadSection.appendChild(messageContainer)

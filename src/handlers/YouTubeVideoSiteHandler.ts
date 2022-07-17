@@ -4,15 +4,11 @@ import { Maybe } from "monet"
 
 class YouTubeVideoSiteHandler implements VideoSiteHandler<VideoSite.YouTube> {
   buttonContainer(document: Document): Maybe<Element> {
-    return this.videoPlayer(document)
+    return Maybe.fromNull(document.getElementById("messages"))
   }
 
   isVideoPage(document: Document): boolean {
-    return this.videoPlayer(document).isJust()
-  }
-
-  videoPlayer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.getElementById("ytd-player"))
+    return document.getElementById("ytd-player") != null
   }
 
   isMatch(url: URL): boolean {
