@@ -1,7 +1,7 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
 import { Maybe } from "monet"
 
-export class XFreeHdVideoSiteHandler implements VideoSiteHandler {
+class XFreeHdVideoSiteHandler implements VideoSiteHandler {
   buttonContainer(document: Document): Maybe<Element> {
     return this.videoPlayer(document)
   }

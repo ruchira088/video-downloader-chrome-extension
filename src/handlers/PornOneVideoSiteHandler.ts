@@ -1,7 +1,7 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
 import { Maybe } from "monet"
 
-export class PornOneVideoSiteHandler implements VideoSiteHandler {
+class PornOneVideoSiteHandler implements VideoSiteHandler {
   buttonContainer(document: Document): Maybe<Element> {
     return this.videoPlayer(document).flatMap(element => Maybe.fromNull(element.parentElement))
   }
