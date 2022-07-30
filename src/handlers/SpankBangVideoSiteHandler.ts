@@ -1,8 +1,7 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
-import { VideoSite } from "../models/VideoSite"
 import { Maybe } from "monet"
 
-export class SpankBangVideoSiteHandler implements VideoSiteHandler<VideoSite.SpankBang> {
+export class SpankBangVideoSiteHandler implements VideoSiteHandler {
   buttonContainer(document: Document): Maybe<Element> {
     return Maybe.fromNull(document.getElementById("player_wrapper_outer"))
   }

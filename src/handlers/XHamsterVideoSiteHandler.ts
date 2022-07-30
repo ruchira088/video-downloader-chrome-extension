@@ -1,8 +1,7 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
-import { VideoSite } from "../models/VideoSite"
 import { Maybe } from "monet"
 
-class XHamsterVideoSiteHandler implements VideoSiteHandler<VideoSite.XHamster> {
+class XHamsterVideoSiteHandler implements VideoSiteHandler {
   buttonContainer(document: Document): Maybe<Element> {
     return Maybe.fromNull(document.querySelector(".controls"))
   }

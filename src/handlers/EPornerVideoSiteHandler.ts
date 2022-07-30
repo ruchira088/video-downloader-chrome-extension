@@ -1,8 +1,7 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
-import { VideoSite } from "../models/VideoSite"
 import { Maybe } from "monet"
 
-export class EPornerVideoSiteHandler implements VideoSiteHandler<VideoSite.EPorner> {
+export class EPornerVideoSiteHandler implements VideoSiteHandler {
   buttonContainer(document: Document): Maybe<Element> {
     return this.videoPlayer(document)
   }
