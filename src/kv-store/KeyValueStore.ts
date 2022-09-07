@@ -1,6 +1,6 @@
 import { Maybe } from "monet"
 
-export interface KeyValueStore<K, V> {
+export interface KeyValueStore<K, V extends {}> {
   put(key: K, value: V): Promise<Maybe<V>>
 
   get(key: K): Promise<Maybe<V>>
