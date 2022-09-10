@@ -1,4 +1,5 @@
+
 export interface ApiConfiguration {
-  readonly url: string
+  readonly serverUrl: string
   readonly authenticationToken: string
 }

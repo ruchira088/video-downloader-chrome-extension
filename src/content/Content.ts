@@ -1,10 +1,11 @@
 import { Maybe } from "monet"
 import prettyBytes from "pretty-bytes"
-import { videoSiteHandlers } from "../handlers/VideoSiteHandler"
-import videoDownloaderApi, { VideoDownloaderApi } from "../services/VideoDownloaderApi"
-import { VideoMetadata } from "../models/VideoMetadata"
+import { videoSiteHandlers } from "./handlers/VideoSiteHandler"
+import videoDownloaderApi, { VideoDownloaderApi } from "./services/VideoDownloaderApi"
+import { VideoMetadata } from "./models/VideoMetadata"
 
-import "../styles/content.scss"
+import "./styles/content.scss"
+import LocalStorage from "../kv-store/LocalStorage"
 
 const DOWNLOAD_SECTION_ID = "video-downloader"
 
@@ -109,7 +110,7 @@ export const initializeElements = (
   downloadButton: HTMLButtonElement,
   url: string
 ): Promise<void> =>
-  videoDownloaderApi()
+  videoDownloaderApi(new LocalStorage(chrome.storage.local))
     .then((api) => initializeDownloadButton(api, downloadSection, downloadButton, url))
     .catch((error) => {
       downloadButton.textContent = "Error"

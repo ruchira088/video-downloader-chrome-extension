@@ -2,7 +2,7 @@ import { KeyValueStore } from "./KeyValueStore"
 import { Maybe, None, Some } from "monet"
 import StorageArea = chrome.storage.StorageArea
 
-export class StorageAreaKeyValueStore implements KeyValueStore<string, string> {
+export class LocalStorage implements KeyValueStore<string, string> {
   constructor(readonly storageArea: StorageArea) {}
 
   get(key: string): Promise<Maybe<string>> {
@@ -33,4 +33,4 @@ export class StorageAreaKeyValueStore implements KeyValueStore<string, string> {
   }
 }
 
-export default () => new StorageAreaKeyValueStore(chrome.storage.local)
+export default LocalStorage

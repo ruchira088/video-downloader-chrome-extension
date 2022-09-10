@@ -28,7 +28,7 @@
     "*://*.ruchij.com/*"
   ],
   "action": {
-    "default_popup": "config-page.html"
+    "default_popup": "index.html"
   },
   "background": {
     "service_worker": "service-worker.bundle.js"

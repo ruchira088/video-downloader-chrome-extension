@@ -13,14 +13,14 @@ module.exports = {
   mode: process.env.NODE_ENV || "development",
   devtool: "inline-source-map",
   entry: {
-    content: path.resolve(__dirname, "src", "scripts", "Content.ts"),
-    "config-page": path.resolve(__dirname, "src", "scripts", "ConfigPage.ts"),
-    "service-worker": path.resolve(__dirname, "src", "scripts", "ServiceWorker.ts")
+    content: path.resolve(__dirname, "src", "content", "Content.ts"),
+    "action-page": path.resolve(__dirname, "src", "action-page", "ActionPage.tsx"),
+    "service-worker": path.resolve(__dirname, "src", "worker", "ServiceWorker.ts")
   },
   module: {
     rules: [
       {
-        test: /\.([tj])s$/,
+        test: /\.(ts|js|tsx|jsx)$/,
         use: "ts-loader",
         exclude: /node_modules/,
       },
@@ -40,7 +40,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [".ts", ".js"],
+    extensions: [".ts", ".js", "jsx", ".tsx"],
   },
   output: {
     filename: "[name].bundle.js",
@@ -55,7 +55,7 @@ module.exports = {
           to: "manifest.json",
           transform: (content) => JSON.stringify(manifestFile(JSON.parse(content)), null, 2),
         },
-        { from: "*.html", context: "src/html" },
+        { from: "*.html", context: "src/action-page" },
         { from: "icons/*" },
         { from: "images/*" }
       ],
