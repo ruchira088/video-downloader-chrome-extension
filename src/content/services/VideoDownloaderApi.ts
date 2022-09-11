@@ -114,7 +114,7 @@ const apiConfigurations = async (keyValueStore: KeyValueStore<string, string>): 
     await maybeValue
       .filter(value => value != "")
       .map(value => Promise.resolve(JSON.parse(value) as VideoDownloaderApiConfiguration))
-      .orLazy(() => Promise.reject())
+      .orLazy(() => Promise.reject("VideoDownloader API configuration not found"))
 
   return videoDownloaderApiConfiguration
 }

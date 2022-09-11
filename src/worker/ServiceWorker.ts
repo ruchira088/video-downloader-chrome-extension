@@ -25,7 +25,7 @@ const initialiseServer = async (server: Server) => {
     authenticationToken: authenticationCookie.value
   }
 
-  const updatedCredentials = { ...existingApiConfigurations, [server.label.toLowerCase()]: apiConfiguration }
+  const updatedCredentials = { ...existingApiConfigurations, [server.name]: apiConfiguration }
 
   await localStorage.put(StorageKey.ApiConfigurations, JSON.stringify(updatedCredentials))
 }
