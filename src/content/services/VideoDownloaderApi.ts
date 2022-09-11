@@ -101,8 +101,8 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
 
   isProductionServerOnline(): Promise<boolean> {
     // @ts-ignore
-    return fetch(`${this.videoDownloaderApiConfiguration.production.serverUrl}`, { signal: AbortSignal.timeout(3000) })
-      .then(() => true)
+    return fetch(`${this.videoDownloaderApiConfiguration.production.serverUrl}/service/info`, { signal: AbortSignal.timeout(3000) })
+      .then(response => response.ok)
       .catch(() => false)
   }
 }
