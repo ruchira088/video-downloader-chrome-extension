@@ -8,7 +8,7 @@ import { API_SERVERS, ApiServers, Server } from "../models/Server"
 
 const initialiseServer = async (server: Server) => {
   const cookieStore = new ChromeCookieStore(server.apiUrl)
-  const maybeAuthenticationCookie = await cookieStore.get("authentication")
+  const maybeAuthenticationCookie = await cookieStore.get(server.authenticationCookieName)
 
   const authenticationCookie: chrome.cookies.Cookie =
     await maybeAuthenticationCookie
@@ -34,6 +34,7 @@ const run =
   async (apiServers: ApiServers) => {
     await initialiseServer(apiServers.production)
     await initialiseServer(apiServers.development)
+    await initialiseServer(apiServers.productionFallback)
   }
 
 run(API_SERVERS)
