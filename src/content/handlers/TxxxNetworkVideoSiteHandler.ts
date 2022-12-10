@@ -1,5 +1,5 @@
-import { VideoSiteHandler } from "./VideoSiteHandler";
-import { Maybe } from "monet";
+import { VideoSiteHandler } from "./VideoSiteHandler"
+import { Maybe } from "monet"
 
 abstract class TxxxNetworkVideoSiteHandler implements VideoSiteHandler {
   abstract readonly hostname: string
@@ -26,22 +26,22 @@ class TxxxVideoSiteHandler extends TxxxNetworkVideoSiteHandler {
 }
 
 class UPorniaVideoSiteHandler extends TxxxNetworkVideoSiteHandler {
-  readonly hostname: string = "upornia.com";
+  readonly hostname: string = "upornia.com"
   readonly containerCss: string = "div.video-title"
 }
 
 class HClipsVideoSiteHandler extends TxxxNetworkVideoSiteHandler {
-  readonly hostname: string = "hclips.com";
+  readonly hostname: string = "hclips.com"
   readonly containerCss: string = "h1.video-page__title"
 }
 
 class HotMovsVideoSiteHandler extends TxxxNetworkVideoSiteHandler {
-  readonly hostname: string = "hotmovs.com";
+  readonly hostname: string = "hotmovs.com"
   readonly containerCss: string = "h1.video-page__title"
 }
 
 class HdZogVideoSiteHandler extends TxxxNetworkVideoSiteHandler {
-  readonly hostname: string = "hdzog.com";
+  readonly hostname: string = "hdzog.com"
   readonly containerCss: string = ".video-page__header"
 }
 

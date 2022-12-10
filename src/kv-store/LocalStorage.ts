@@ -3,7 +3,8 @@ import { Maybe, None, Some } from "monet"
 import StorageArea = chrome.storage.StorageArea
 
 export class LocalStorage implements KeyValueStore<string, string> {
-  constructor(readonly storageArea: StorageArea) {}
+  constructor(readonly storageArea: StorageArea) {
+  }
 
   get(key: string): Promise<Maybe<string>> {
     return new Promise<Maybe<string>>((resolve) => {

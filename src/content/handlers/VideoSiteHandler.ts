@@ -1,17 +1,17 @@
-import { Maybe } from "monet";
-import pornOneVideoSiteHandler from "./PornOneVideoSiteHandler";
-import spankBangVideoSiteHandler from "./SpankBangVideoSiteHandler";
-import epornerVideoSiteHandler from "./EPornerVideoSiteHandler";
-import youTubeVideoSiteHandler from "./YouTubeVideoSiteHandler";
-import xhamsterVideoSiteHandler from "./XHamsterVideoSiteHandler";
-import xfreeHdVideoSiteHandler from "./XFreeHdVideoSiteHandler";
+import { Maybe } from "monet"
+import pornOneVideoSiteHandler from "./PornOneVideoSiteHandler"
+import spankBangVideoSiteHandler from "./SpankBangVideoSiteHandler"
+import epornerVideoSiteHandler from "./EPornerVideoSiteHandler"
+import youTubeVideoSiteHandler from "./YouTubeVideoSiteHandler"
+import xhamsterVideoSiteHandler from "./XHamsterVideoSiteHandler"
+import xfreeHdVideoSiteHandler from "./XFreeHdVideoSiteHandler"
 import {
   hclipsVideoSiteHandler,
   hdZogVideoSiteHandler,
   hotMovsVideoSiteHandler,
   txxxVideoSiteHandler,
   uporniaVideoSiteHandler
-} from "./TxxxNetworkVideoSiteHandler";
+} from "./TxxxNetworkVideoSiteHandler"
 
 export interface VideoSiteHandler {
   isMatch: (url: URL) => boolean;
@@ -33,4 +33,4 @@ export const videoSiteHandlers: VideoSiteHandler[] = [
   txxxVideoSiteHandler,
   hotMovsVideoSiteHandler,
   uporniaVideoSiteHandler
-];
+]

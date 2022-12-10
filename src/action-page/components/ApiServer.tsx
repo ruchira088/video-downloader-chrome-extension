@@ -45,9 +45,9 @@ const ApiServer = (props: { server: Server }) => {
     <div>
       <div>{props.server.label}</div>
       <div>{status}</div>
-      { maybeVersion.map(version => <div>{ version }</div>).orNull() }
+      {maybeVersion.map(version => <div>{version}</div>).orNull()}
       <div>{props.server.apiUrl}</div>
-      { mayBuildTimestamp.map(buildTimestamp => <div>Built { buildTimestamp.fromNow()}</div>).orNull() }
+      {mayBuildTimestamp.map(buildTimestamp => <div>Built {buildTimestamp.fromNow()}</div>).orNull()}
     </div>
   )
 }

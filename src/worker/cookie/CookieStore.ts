@@ -6,7 +6,8 @@ export interface CookieStore {
 }
 
 class ChromeCookieStore implements CookieStore {
-  constructor(readonly url: string) {}
+  constructor(readonly url: string) {
+  }
 
   get(key: string): Promise<Maybe<Cookie>> {
     return new Promise((resolve) =>

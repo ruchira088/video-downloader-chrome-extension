@@ -1,7 +1,6 @@
 import ChromeCookieStore from "./cookie/CookieStore"
 import LocalStorage from "../kv-store/LocalStorage"
 import { StorageKey } from "../kv-store/StorageKey"
-import { AuthenticationTokenNotFoundException } from "../errors/Errors"
 import { Maybe } from "monet"
 import { ApiConfiguration } from "../models/ApiConfiguration"
 import { API_SERVERS, ApiServers, Server } from "../models/Server"
@@ -13,7 +12,7 @@ const initialiseServer = async (server: Server) => {
   const authenticationCookie: chrome.cookies.Cookie =
     await maybeAuthenticationCookie
       .map(cookie => Promise.resolve(cookie))
-      .orLazy(() => Promise.reject(AuthenticationTokenNotFoundException))
+      .orLazy(() => Promise.reject(new Error(`Authentication token not found for ${server.name}`)))
 
   const localStorage = new LocalStorage(chrome.storage.local)
 
