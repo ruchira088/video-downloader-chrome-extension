@@ -4,12 +4,14 @@ import { StorageKey } from "../kv-store/StorageKey"
 import { Maybe } from "monet"
 import { ApiConfiguration } from "../models/ApiConfiguration"
 import { API_SERVERS, ApiServers, Server } from "../models/Server"
+import Cookie = chrome.cookies.Cookie
 
 const initialiseServer = async (server: Server) => {
   const cookieStore = new ChromeCookieStore(server.apiUrl)
+
   const maybeAuthenticationCookie = await cookieStore.get(server.authenticationCookieName)
 
-  const authenticationCookie: chrome.cookies.Cookie =
+  const authenticationCookie: Cookie =
     await maybeAuthenticationCookie
       .map(cookie => Promise.resolve(cookie))
       .orLazy(() => Promise.reject(new Error(`Authentication token not found for ${server.name}`)))
@@ -31,9 +33,9 @@ const initialiseServer = async (server: Server) => {
 
 const run =
   async (apiServers: ApiServers) => {
-    await initialiseServer(apiServers.production)
-    await initialiseServer(apiServers.development)
-    await initialiseServer(apiServers.productionFallback)
+    await initialiseServer(apiServers.production).catch(console.error)
+    await initialiseServer(apiServers.development).catch(console.error)
+    await initialiseServer(apiServers.productionFallback).catch(console.error)
   }
 
 run(API_SERVERS)
