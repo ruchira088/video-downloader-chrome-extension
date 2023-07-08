@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
+import { Maybe, None, Some } from "monet"
+import moment, { duration, Duration, Moment } from "moment"
 import { HealthStatus } from "../models/HealthStatus"
 import { Server } from "../../models/Server"
-import { Maybe, None, Some } from "monet"
-import moment, { Moment } from "moment"
 
 interface ServiceInformation {
   readonly gitCommit: string
@@ -12,14 +12,18 @@ interface ServiceInformation {
 
 const ApiServer = (props: { server: Server }) => {
   const [status, setStatus] = useState(HealthStatus.Pending)
+  const [maybePing, setPing] = useState<Maybe<Duration>>(None())
   const [maybeVersion, setVersion] = useState<Maybe<string>>(None())
   const [mayBuildTimestamp, setBuildTimestamp] = useState<Maybe<Moment>>(None())
 
+  const checkStatus = () => {
+    const start = moment()
 
-  const checkStatus = () =>
-    // @ts-ignore
-    fetch(`${props.server.apiUrl}/service/info`, { signal: AbortSignal.timeout(3000) })
+    fetch(`${props.server.apiUrl}/service/info`, { signal: AbortSignal.timeout(10_000) })
       .then(async response => {
+        const ping = moment().valueOf() - start.valueOf()
+        setPing(Some(duration(ping, "ms")))
+
         if (response.ok) {
           const serviceInformation: ServiceInformation = await response.json()
           setStatus(HealthStatus.Online)
@@ -33,17 +37,20 @@ const ApiServer = (props: { server: Server }) => {
       .catch(() => {
         setStatus(HealthStatus.Offline)
         setVersion(None())
+        setBuildTimestamp(None())
       })
+  }
 
   useEffect(() => {
     checkStatus()
-    const id = setInterval(checkStatus, 5_000)
+    const id = setInterval(checkStatus, 15_000)
     return () => clearInterval(id)
   }, [])
 
   return (
     <div>
       <div>{props.server.label}</div>
+      {maybePing.map(ping => <div>{ping.milliseconds()}ms</div>).orNull()}
       <div>{status}</div>
       {maybeVersion.map(version => <div>{version}</div>).orNull()}
       <div>{props.server.apiUrl}</div>
