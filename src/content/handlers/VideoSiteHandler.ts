@@ -12,6 +12,7 @@ import {
   txxxVideoSiteHandler,
   uporniaVideoSiteHandler
 } from "./TxxxNetworkVideoSiteHandler"
+import SxyPrnVideoSiteHandler from "./SxyPrnVideoSiteHandler"
 
 export interface VideoSiteHandler {
   isMatch: (url: URL) => boolean;
@@ -32,5 +33,6 @@ export const videoSiteHandlers: VideoSiteHandler[] = [
   hdZogVideoSiteHandler,
   txxxVideoSiteHandler,
   hotMovsVideoSiteHandler,
-  uporniaVideoSiteHandler
+  uporniaVideoSiteHandler,
+  SxyPrnVideoSiteHandler
 ]
