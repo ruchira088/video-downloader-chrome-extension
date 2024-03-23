@@ -2,12 +2,14 @@ import { Maybe } from "monet"
 import prettyBytes from "pretty-bytes"
 import { videoSiteHandlers } from "./handlers/VideoSiteHandler"
 import videoDownloaderApi, { VideoDownloaderApi } from "./services/VideoDownloaderApi"
-import { VideoMetadata } from "./models/VideoMetadata"
 
 import "./styles/content.scss"
 import LocalStorage from "../kv-store/LocalStorage"
+import { SchedulingStatus } from "./models/ScheduledVideoDownload"
 
 const DOWNLOAD_SECTION_ID = "video-downloader"
+const FRONT_END_URL = "https://video.home.ruchij.com"
+
 
 window.onload = () => {
   setInterval(() => run(document, window.location.href), 5000)
@@ -58,52 +60,64 @@ export const createDownloadSection = (document: Document, url: string): [HTMLDiv
   return [downloadSection, downloadButton]
 }
 
-const initializeDownloadButton = (
+const initializeDownloadButton = async (
   api: VideoDownloaderApi,
   downloadSection: HTMLDivElement,
   downloadButton: HTMLButtonElement,
   videoUrl: string
-): Promise<void> =>
-  api
-    .videoExistsByUrl(videoUrl)
-    .then((exists) => {
-      if (exists) {
-        downloadButton.textContent = "Already scheduled"
-        downloadButton.className = "scheduled"
+): Promise<void> => {
+  try {
+    const scheduledVideoDownloads = await api.searchScheduledVideosByUrl(videoUrl)
+    const downloadedVideo = scheduledVideoDownloads.find(scheduledVideoDownload => scheduledVideoDownload.status === SchedulingStatus.Completed)
+
+    if (downloadedVideo != undefined) {
+      downloadButton.textContent = "Go to video"
+      downloadButton.className = "completed"
+      downloadButton.disabled = false
+
+      downloadButton.onclick = () => {
+        const url = `${FRONT_END_URL}/video/${downloadedVideo.videoMetadata.id}`
+        window.open(url, "_blank")
+      }
+
+    } else if (scheduledVideoDownloads.length > 0) {
+      downloadButton.textContent = "Scheduled"
+      downloadButton.className = "scheduled"
+      downloadButton.disabled = true
+    } else {
+      const downloadIcon = chrome.runtime.getURL("images/download-icon.svg")
+      // downloadButton.style.backgroundImage = `url('${downloadIcon}')`
+
+      downloadButton.onclick = async () => {
         downloadButton.disabled = true
 
-        return Promise.resolve()
-      } else {
-        downloadButton.textContent = "Download"
-        downloadButton.className = "download"
-        downloadButton.disabled = false
-
-        const downloadIcon = chrome.runtime.getURL("images/download-icon.svg")
-        // downloadButton.style.backgroundImage = `url('${downloadIcon}')`
-
-        downloadButton.onclick = () => {
-          downloadButton.disabled = true
-
-          return api
-            .scheduleVideoDownload(videoUrl)
-            .then(() => initializeDownloadButton(api, downloadSection, downloadButton, videoUrl))
-        }
-
-        return api.gatherVideoMetadata(videoUrl).then((videoMetadata: VideoMetadata) => {
-          displayMessage(downloadSection, prettyBytes(videoMetadata.size))
-          return Promise.resolve()
-        })
+        await api.scheduleVideoDownload(videoUrl)
+        await initializeDownloadButton(api, downloadSection, downloadButton, videoUrl)
       }
-    })
-    .catch(({ errorMessages }: { errorMessages: string[] | undefined }) =>
-      Promise.reject(
-        new Error(
-          Maybe.fromFalsy(errorMessages)
-            .map((messages) => messages.join(", "))
-            .orJust("Unknown error")
-        )
+
+      downloadButton.textContent = "Fetching metadata..."
+      const videoMetadata = await api.gatherVideoMetadata(videoUrl)
+
+      if (videoMetadata.size > 0) {
+        displayMessage(downloadSection, prettyBytes(videoMetadata.size))
+      }
+
+      downloadButton.textContent = "Download"
+      downloadButton.className = "download"
+      downloadButton.disabled = false
+    }
+  } catch (error) {
+    const { errorMessages } = error as { errorMessages: string[] | undefined }
+
+    return Promise.reject(
+      new Error(
+        Maybe.fromFalsy(errorMessages)
+          .map((messages) => messages.join(", "))
+          .orJust("Unknown error")
       )
     )
+  }
+}
 
 export const initializeElements = (
   downloadSection: HTMLDivElement,

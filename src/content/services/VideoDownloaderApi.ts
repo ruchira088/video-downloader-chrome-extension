@@ -4,6 +4,7 @@ import { KeyValueStore } from "../../kv-store/KeyValueStore"
 import { VideoMetadata } from "../models/VideoMetadata"
 import { parseVideoMetadata } from "../utils/ResponseParser"
 import { ApiConfiguration } from "../../models/ApiConfiguration"
+import { ScheduledVideoDownload, SchedulingStatus } from "../models/ScheduledVideoDownload"
 
 interface VideoDownloaderApiConfiguration {
   readonly production: ApiConfiguration
@@ -11,12 +12,16 @@ interface VideoDownloaderApiConfiguration {
   readonly productionFallback: ApiConfiguration
 }
 
-export interface VideoDownloaderApi {
-  videoExistsByUrl(videoUrl: string): Promise<boolean>
+interface SearchResult<T> {
+  readonly results: T[]
+}
 
+export interface VideoDownloaderApi {
   scheduleVideoDownload(videoUrl: string): Promise<boolean>
 
   gatherVideoMetadata(videoUrl: string): Promise<VideoMetadata>
+
+  searchScheduledVideosByUrl(videoUrl: string): Promise<ScheduledVideoDownload[]>
 }
 
 class VideoDownloaderApiImpl implements VideoDownloaderApi {
@@ -45,15 +50,12 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
     return response.ok
   }
 
-  async videoExistsByUrl(videoUrl: string): Promise<boolean> {
-    if (await this.isProductionServerOnline()) {
-      return this._videoExistsByUrl(videoUrl, this.videoDownloaderApiConfiguration.production)
-    } else {
-      return this._videoExistsByUrl(videoUrl, this.videoDownloaderApiConfiguration.productionFallback)
-    }
+  async searchScheduledVideosByUrl(videoUrl: string): Promise<ScheduledVideoDownload[]> {
+    const searchResults = await this._searchScheduledVideosByUrl(videoUrl, this.videoDownloaderApiConfiguration.production)
+    return searchResults.results
   }
 
-  async _videoExistsByUrl(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<boolean> {
+  async _searchScheduledVideosByUrl(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<SearchResult<ScheduledVideoDownload>> {
     const response =
       await fetch(`${apiConfiguration.serverUrl}/schedule/search?video-url=${encodeURIComponent(videoUrl)}`, {
         headers: {
@@ -61,13 +63,11 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
         }
       })
 
-    const body = await response.json()
-
     if (response.ok) {
-      const results = (body as { readonly results: object[] }).results
-      return Promise.resolve(results.length > 0)
+      const body: SearchResult<ScheduledVideoDownload> = await response.json()
+      return Promise.resolve(body)
     } else {
-      return Promise.reject(body)
+      return Promise.reject(response)
     }
   }
 

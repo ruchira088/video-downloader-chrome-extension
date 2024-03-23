@@ -7,7 +7,7 @@ export interface Server {
 
 export interface ApiServers {
   readonly production: Server
-  readonly productionFallback: Server
+  readonly productionFallback?: Server
 }
 
 export const API_SERVERS: ApiServers = {
@@ -17,10 +17,10 @@ export const API_SERVERS: ApiServers = {
     apiUrl: "https://api.video.home.ruchij.com",
     authenticationCookieName: "authentication"
   },
-  productionFallback: {
-    name: "productionFallback",
-    label: "Production Fallback",
-    apiUrl: "https://fallback-api.video.dev.ruchij.com",
-    authenticationCookieName: "SESSION"
-  }
+  // productionFallback: {
+  //   name: "productionFallback",
+  //   label: "Production Fallback",
+  //   apiUrl: "https://fallback-api.video.dev.ruchij.com",
+  //   authenticationCookieName: "SESSION"
+  // }
 }

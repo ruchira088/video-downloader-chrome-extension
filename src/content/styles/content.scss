@@ -28,6 +28,10 @@
     &.scheduled {
 
     }
+
+    &.completed {
+      cursor: pointer;
+    }
   }
 
   .message-board {

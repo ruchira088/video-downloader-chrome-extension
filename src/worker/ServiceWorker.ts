@@ -34,7 +34,10 @@ const initialiseServer = async (server: Server) => {
 const run =
   async (apiServers: ApiServers) => {
     await initialiseServer(apiServers.production).catch(console.error)
-    await initialiseServer(apiServers.productionFallback).catch(console.error)
+
+    if (apiServers.productionFallback != undefined) {
+      await initialiseServer(apiServers.productionFallback).catch(console.error)
+    }
   }
 
 run(API_SERVERS)
