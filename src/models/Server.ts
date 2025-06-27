@@ -1,26 +1,31 @@
-export interface Server {
-  readonly apiUrl: string
-  readonly name: string
-  readonly label: string
-  readonly authenticationCookieName: string
+import { z } from "zod/v4"
+
+export enum ApiName {
+  Production = "production",
+  Fallback = "fallback"
 }
 
-export interface ApiServers {
-  readonly production: Server
-  readonly productionFallback?: Server
-}
+export const Server = z.object({
+  apiUrl: z.string(),
+  name: z.enum(ApiName),
+  label: z.string(),
+  authenticationCookieName: z.string()
+})
 
-export const API_SERVERS: ApiServers = {
+export type Server = z.infer<typeof Server>
+
+export const ApiServers = z.object({
+  [ApiName.Production]: Server,
+  [ApiName.Fallback]: Server.nullish()
+})
+
+export type ApiServers = z.infer<typeof ApiServers>
+
+export const API_SERVERS: ApiServers = ApiServers.parse({
   production: {
-    name: "production",
+    name: ApiName.Production,
     label: "Production",
     apiUrl: "https://api.video.home.ruchij.com",
     authenticationCookieName: "authentication"
-  },
-  // productionFallback: {
-  //   name: "productionFallback",
-  //   label: "Production Fallback",
-  //   apiUrl: "https://fallback-api.video.dev.ruchij.com",
-  //   authenticationCookieName: "SESSION"
-  // }
-}
+  }
+})

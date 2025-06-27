@@ -1,13 +1,12 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
-import { Maybe } from "monet"
 
 abstract class TxxxNetworkVideoSiteHandler implements VideoSiteHandler {
   abstract readonly hostname: string
 
   abstract readonly containerCss: string
 
-  buttonContainer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.querySelector(this.containerCss))
+  buttonContainer(document: Document): HTMLElement | null {
+    return document.querySelector(this.containerCss)
   }
 
   isMatch(url: URL): boolean {

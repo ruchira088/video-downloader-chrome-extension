@@ -1,11 +1,11 @@
-import { Maybe } from "monet"
 import prettyBytes from "pretty-bytes"
-import { videoSiteHandlers } from "./handlers/VideoSiteHandler"
-import videoDownloaderApi, { VideoDownloaderApi } from "./services/VideoDownloaderApi"
+import { VideoSiteHandler, videoSiteHandlers } from "./handlers/VideoSiteHandler"
+import { createVideoDownloaderApi, VideoDownloaderApi } from "./services/VideoDownloaderApi"
 
 import "./styles/content.scss"
 import LocalStorage from "../kv-store/LocalStorage"
 import { SchedulingStatus } from "./models/ScheduledVideoDownload"
+import { map } from "../helpers/TypeUtils"
 
 const DOWNLOAD_SECTION_ID = "video-downloader"
 const FRONT_END_URL = "https://video.home.ruchij.com"
@@ -15,36 +15,53 @@ window.onload = () => {
   setInterval(() => run(document, window.location.href), 5000)
 }
 
-const run = (document: Document, url: string): Promise<Maybe<boolean>> => {
-  return Maybe.fromNull(videoSiteHandlers.find((videoSiteHandler) => videoSiteHandler.isMatch(new URL(url)))).fold<
-    Promise<Maybe<boolean>>
-  >(Promise.resolve(Maybe.None()))((videoSiteHandler) => {
-    if (videoSiteHandler.isVideoPage(document) && !hasDownloadSection(document, url)) {
-      removeDownloadSectionIfExists(document)
-      const [downloadSection, downloadButton] = createDownloadSection(document, url)
-      downloadButton.disabled = true
+const run = async (document: Document, url: string): Promise<boolean> => {
+  const videoSiteHandler: VideoSiteHandler | undefined  =
+    videoSiteHandlers.find((videoSiteHandler) => videoSiteHandler.isMatch(new URL(url)))
 
-      videoSiteHandler.buttonContainer(document).forEach((container) => container.appendChild(downloadSection))
+  if (videoSiteHandler === undefined) {
+    return false
+  }
 
-      return initializeElements(downloadSection, downloadButton, url).then(() => Maybe.Some(true))
-    } else {
-      return Promise.resolve(Maybe.Some(false))
+  if (videoSiteHandler.isVideoPage(document) && !downloadSectionExistsForUrl(document, url)) {
+    removeDownloadSectionIfExists(document)
+    const [downloadSection, downloadButton] = createDownloadSection(document, url)
+    const buttonContainer: Element | null = videoSiteHandler.buttonContainer(document)
+    downloadButton.disabled = true
+
+    if (buttonContainer === null) {
+      return false
     }
-  })
+
+    buttonContainer.appendChild(downloadSection)
+
+    await initializeElements(downloadSection, downloadButton, url)
+    return true
+  } else {
+    return false
+  }
 }
 
-const removeDownloadSectionIfExists = (document: Document) =>
-  Maybe.fromNull(document.getElementById(DOWNLOAD_SECTION_ID))
-    .map((section) => {
-      section.remove()
-      return true
-    })
-    .orJust(false)
+const removeDownloadSectionIfExists = (document: Document): boolean => {
+  const downloadSection: HTMLElement | null = document.getElementById(DOWNLOAD_SECTION_ID)
 
-const hasDownloadSection = (document: Document, url: String): boolean =>
-  Maybe.fromNull(document.getElementById(DOWNLOAD_SECTION_ID))
-    .map((section) => section.dataset.url === url)
-    .orJust(false)
+  if (downloadSection === null) {
+    return false
+  }
+
+  downloadSection.remove()
+  return true
+}
+
+const downloadSectionExistsForUrl = (document: Document, url: String): boolean => {
+  const downloadSection: HTMLElement | null = document.getElementById(DOWNLOAD_SECTION_ID)
+
+  if (downloadSection === null) {
+    return false
+  }
+
+  return downloadSection.dataset.url === url
+}
 
 export const createDownloadSection = (document: Document, url: string): [HTMLDivElement, HTMLButtonElement] => {
   const downloadSection = document.createElement("div")
@@ -110,28 +127,26 @@ const initializeDownloadButton = async (
     const { errorMessages } = error as { errorMessages: string[] | undefined }
 
     return Promise.reject(
-      new Error(
-        Maybe.fromFalsy(errorMessages)
-          .map((messages) => messages.join(", "))
-          .orJust("Unknown error")
-      )
+      new Error(map(errorMessages, messages => messages.join(", ")) ?? "Unknown error")
     )
   }
 }
 
-export const initializeElements = (
+export const initializeElements = async (
   downloadSection: HTMLDivElement,
   downloadButton: HTMLButtonElement,
   url: string
-): Promise<void> =>
-  videoDownloaderApi(new LocalStorage(chrome.storage.local))
-    .then((api) => initializeDownloadButton(api, downloadSection, downloadButton, url))
-    .catch((error) => {
-      downloadButton.textContent = "Error"
-      downloadButton.disabled = true
+): Promise<void> => {
+  try {
+    const videoDownloaderApi = await createVideoDownloaderApi(new LocalStorage(chrome.storage.local))
+    await initializeDownloadButton(videoDownloaderApi, downloadSection, downloadButton, url)
+  } catch (error) {
+    downloadButton.textContent = "Error"
+    downloadButton.disabled = true
 
-      displayMessage(downloadSection, error)
-    })
+    displayMessage(downloadSection, error?.toString() ?? "Unknown error")
+  }
+}
 
 const displayMessage = (downloadSection: HTMLDivElement, message: string): HTMLElement => {
   const messageContainer = document.createElement("span")

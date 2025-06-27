@@ -1,10 +1,14 @@
 import React from "react"
-import ApiServer from "./ApiServer"
+import ApiServerInformation from "./ApiServerInformation"
 import { API_SERVERS } from "../../models/Server"
 
 const App = () => (
   <div>
-    {Object.values(API_SERVERS).map((server, index) => <ApiServer server={server} key={index} />)}
+    {
+      Object.values(API_SERVERS)
+        .filter(server => server != null)
+        .map(server => <ApiServerInformation server={server} key={server.name} />)
+    }
   </div>
 )
 

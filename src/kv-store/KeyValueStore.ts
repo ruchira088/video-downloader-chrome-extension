@@ -1,9 +1,7 @@
-import { Maybe } from "monet"
-
 export interface KeyValueStore<K, V extends {}> {
-  put(key: K, value: V): Promise<Maybe<V>>
+  put(key: K, value: V): Promise<V | null>
 
-  get(key: K): Promise<Maybe<V>>
+  get(key: K): Promise<V | null>
 
-  remove(key: K): Promise<Maybe<V>>
+  remove(key: K): Promise<V | null>
 }

@@ -1,9 +1,12 @@
-import { Moment } from "moment"
+import { z } from "zod/v4"
+import { ZodDateTime } from "../../models/Zod"
 
-export interface FileResource {
-  readonly id: string
-  readonly createdAt: Moment
-  readonly path: string
-  readonly mediaType: string
-  readonly size: number
-}
+export const FileResource = z.object({
+  id: z.string(),
+  createdAt: ZodDateTime,
+  path: z.string(),
+  mediaType: z.string(),
+  size: z.number().int()
+})
+
+export type FileResource = z.infer<typeof FileResource>

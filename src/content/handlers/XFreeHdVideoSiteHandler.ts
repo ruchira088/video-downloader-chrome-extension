@@ -1,8 +1,7 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
-import { Maybe } from "monet"
 
 class XFreeHdVideoSiteHandler implements VideoSiteHandler {
-  buttonContainer(document: Document): Maybe<Element> {
+  buttonContainer(document: Document): HTMLElement | null {
     return this.videoPlayer(document)
   }
 
@@ -11,11 +10,11 @@ class XFreeHdVideoSiteHandler implements VideoSiteHandler {
   }
 
   isVideoPage(document: Document): boolean {
-    return this.videoPlayer(document).isJust()
+    return this.videoPlayer(document) != null
   }
 
-  videoPlayer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.querySelector(".video-container"))
+  videoPlayer(document: Document): HTMLElement | null {
+    return document.querySelector(".video-container")
   }
 }
 

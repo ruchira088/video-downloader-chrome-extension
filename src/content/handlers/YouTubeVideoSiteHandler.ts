@@ -1,9 +1,8 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
-import { Maybe } from "monet"
 
 class YouTubeVideoSiteHandler implements VideoSiteHandler {
-  buttonContainer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.getElementById("messages"))
+  buttonContainer(document: Document): HTMLElement | null {
+    return document.getElementById("messages")
   }
 
   isVideoPage(document: Document): boolean {

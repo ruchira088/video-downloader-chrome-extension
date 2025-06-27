@@ -1,8 +1,7 @@
-import { Maybe } from "monet"
 import Cookie = chrome.cookies.Cookie
 
 export interface CookieStore {
-  get(key: string): Promise<Maybe<Cookie>>
+  get(key: string): Promise<Cookie | null>
 
   getAll(): Promise<Cookie[]>
 }
@@ -11,9 +10,9 @@ class ChromeCookieStore implements CookieStore {
   constructor(readonly url: string) {
   }
 
-  get(key: string): Promise<Maybe<Cookie>> {
-    return this.getAll()
-      .then(cookies => Maybe.fromFalsy(cookies.find((cookie) => cookie.name === key)))
+  async get(key: string): Promise<Cookie | null> {
+    const cookies = await this.getAll()
+    return cookies.find((cookie) => cookie.name === key) ?? null
   }
 
   getAll(): Promise<Cookie[]> {

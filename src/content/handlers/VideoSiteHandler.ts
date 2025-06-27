@@ -1,4 +1,3 @@
-import { Maybe } from "monet"
 import pornOneVideoSiteHandler from "./PornOneVideoSiteHandler"
 import spankBangVideoSiteHandler from "./SpankBangVideoSiteHandler"
 import epornerVideoSiteHandler from "./EPornerVideoSiteHandler"
@@ -19,7 +18,7 @@ export interface VideoSiteHandler {
 
   isVideoPage: (document: Document) => boolean;
 
-  buttonContainer: (document: Document) => Maybe<Element>;
+  buttonContainer: (document: Document) => HTMLElement | null;
 }
 
 export const videoSiteHandlers: VideoSiteHandler[] = [

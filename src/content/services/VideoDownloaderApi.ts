@@ -2,19 +2,10 @@ import { LocalStorage } from "../../kv-store/LocalStorage"
 import { StorageKey } from "../../kv-store/StorageKey"
 import { KeyValueStore } from "../../kv-store/KeyValueStore"
 import { VideoMetadata } from "../models/VideoMetadata"
-import { parseVideoMetadata } from "../utils/ResponseParser"
-import { ApiConfiguration } from "../../models/ApiConfiguration"
-import { ScheduledVideoDownload, SchedulingStatus } from "../models/ScheduledVideoDownload"
-
-interface VideoDownloaderApiConfiguration {
-  readonly production: ApiConfiguration
-  readonly development: ApiConfiguration
-  readonly productionFallback: ApiConfiguration
-}
-
-interface SearchResult<T> {
-  readonly results: T[]
-}
+import { ApiConfiguration, ApiConfigurations } from "../../models/ApiConfiguration"
+import { ScheduledVideoDownload } from "../models/ScheduledVideoDownload"
+import { SearchResult } from "../models/SearchResult"
+import { zodParse } from "../../models/Zod"
 
 export interface VideoDownloaderApi {
   scheduleVideoDownload(videoUrl: string): Promise<boolean>
@@ -25,15 +16,13 @@ export interface VideoDownloaderApi {
 }
 
 class VideoDownloaderApiImpl implements VideoDownloaderApi {
-  constructor(readonly videoDownloaderApiConfiguration: VideoDownloaderApiConfiguration) {
+  constructor(readonly apiConfigurations: ApiConfigurations) {
   }
 
-  async scheduleVideoDownload(videoUrl: string): Promise<boolean> {
-    if (await this.isProductionServerOnline()) {
-      return this._scheduleVideoDownload(videoUrl, this.videoDownloaderApiConfiguration.production)
-    } else {
-      return this._scheduleVideoDownload(videoUrl, this.videoDownloaderApiConfiguration.productionFallback)
-    }
+  scheduleVideoDownload(videoUrl: string): Promise<boolean> {
+    return this._runActions(
+      apiConfiguration => this._scheduleVideoDownload(videoUrl, apiConfiguration)
+    )
   }
 
   async _scheduleVideoDownload(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<boolean> {
@@ -51,7 +40,10 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
   }
 
   async searchScheduledVideosByUrl(videoUrl: string): Promise<ScheduledVideoDownload[]> {
-    const searchResults = await this._searchScheduledVideosByUrl(videoUrl, this.videoDownloaderApiConfiguration.production)
+    const searchResults = await this._runActions(
+      (apiConfiguration) => this._searchScheduledVideosByUrl(videoUrl, apiConfiguration)
+    )
+
     return searchResults.results
   }
 
@@ -64,19 +56,18 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
       })
 
     if (response.ok) {
-      const body: SearchResult<ScheduledVideoDownload> = await response.json()
-      return Promise.resolve(body)
+      const responseBody = await response.json()
+      const searchResults = zodParse(SearchResult(ScheduledVideoDownload), responseBody)
+      return searchResults
     } else {
       return Promise.reject(response)
     }
   }
 
-  async gatherVideoMetadata(videoUrl: string): Promise<VideoMetadata> {
-    if (await this.isProductionServerOnline()) {
-      return this._gatherVideoMetadata(videoUrl, this.videoDownloaderApiConfiguration.production)
-    } else {
-      return this._gatherVideoMetadata(videoUrl, this.videoDownloaderApiConfiguration.development)
-    }
+  gatherVideoMetadata(videoUrl: string): Promise<VideoMetadata> {
+    return this._runActions(
+      (apiConfiguration) => this._gatherVideoMetadata(videoUrl, apiConfiguration)
+    )
   }
 
   async _gatherVideoMetadata(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<VideoMetadata> {
@@ -93,31 +84,49 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
     const body = await response.json()
 
     if (response.ok) {
-      return Promise.resolve(parseVideoMetadata(body))
+      return zodParse(VideoMetadata, body)
     } else {
-      return Promise.reject(body)
+      return Promise.reject(new Error(`Received non-OK response from server: ${body}` ))
     }
   }
 
-  isProductionServerOnline(): Promise<boolean> {
-    // @ts-ignore
-    return fetch(`${this.videoDownloaderApiConfiguration.production.serverUrl}/service/info`, { signal: AbortSignal.timeout(3000) })
-      .then(response => response.ok)
-      .catch(() => false)
+  async _runActions<T>(
+    onServer: (apiConfiguration: ApiConfiguration) => Promise<T>
+  ): Promise<T> {
+    if (await this._isServerOnline(this.apiConfigurations.production)) {
+      return onServer(this.apiConfigurations.production!)
+    } else if (await this._isServerOnline(this.apiConfigurations.fallback)) {
+      return onServer(this.apiConfigurations.fallback!)
+    } else {
+      return Promise.reject(new Error("No servers available"))
+    }
+  }
+
+  async _isServerOnline(apiConfiguration: ApiConfiguration | null | undefined): Promise<boolean> {
+    if (apiConfiguration == null) {
+      return Promise.resolve(false)
+    }
+
+    try {
+      const response = await fetch(`${apiConfiguration.serverUrl}/service/info`, { signal: AbortSignal.timeout(3000) })
+      return response.ok
+    } catch {
+      return false
+    }
   }
 }
 
-const apiConfigurations = async (keyValueStore: KeyValueStore<string, string>): Promise<VideoDownloaderApiConfiguration> => {
-  const maybeValue = await keyValueStore.get(StorageKey.ApiConfigurations)
+const apiConfigurations = async (keyValueStore: KeyValueStore<string, string>): Promise<ApiConfigurations> => {
+  const apiConfigurationsString: string | null = await keyValueStore.get(StorageKey.ApiConfigurations)
 
-  const videoDownloaderApiConfiguration: VideoDownloaderApiConfiguration =
-    await maybeValue
-      .filter(value => value != "")
-      .map(value => Promise.resolve(JSON.parse(value) as VideoDownloaderApiConfiguration))
-      .orLazy(() => Promise.reject("VideoDownloader API configuration not found"))
+  if (apiConfigurationsString == null || apiConfigurationsString.trim() === "") {
+    throw new Error("VideoDownloader API configurations not found")
+  }
 
-  return videoDownloaderApiConfiguration
+  const apiConfigs = zodParse(ApiConfigurations, JSON.parse(apiConfigurationsString))
+
+  return apiConfigs
 }
 
-export default (localStorage: LocalStorage) =>
+export const createVideoDownloaderApi = (localStorage: LocalStorage) =>
   apiConfigurations(localStorage).then((config) => new VideoDownloaderApiImpl(config))

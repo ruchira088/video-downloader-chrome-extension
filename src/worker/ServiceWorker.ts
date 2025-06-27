@@ -1,43 +1,46 @@
 import ChromeCookieStore from "./cookie/CookieStore"
 import LocalStorage from "../kv-store/LocalStorage"
 import { StorageKey } from "../kv-store/StorageKey"
-import { Maybe } from "monet"
-import { ApiConfiguration } from "../models/ApiConfiguration"
-import { API_SERVERS, ApiServers, Server } from "../models/Server"
+import { ApiConfiguration, ApiConfigurations } from "../models/ApiConfiguration"
+import { API_SERVERS, ApiName, ApiServers, Server } from "../models/Server"
+import { map } from "../helpers/TypeUtils"
+import { zodParse } from "../models/Zod"
 import Cookie = chrome.cookies.Cookie
 
 const initialiseServer = async (server: Server) => {
   const cookieStore = new ChromeCookieStore(server.apiUrl)
 
-  const maybeAuthenticationCookie = await cookieStore.get(server.authenticationCookieName)
+  const authenticationCookie: Cookie | null =
+    await cookieStore.get(server.authenticationCookieName)
 
-  const authenticationCookie: Cookie =
-    await maybeAuthenticationCookie
-      .map(cookie => Promise.resolve(cookie))
-      .orLazy(() => Promise.reject(new Error(`Authentication token not found for ${server.name}`)))
+  if (authenticationCookie == null) {
+    throw new Error(`Authentication token not found for ${server.name}`)
+  }
 
   const localStorage = new LocalStorage(chrome.storage.local)
 
-  const maybeCredentials: Maybe<string> = await localStorage.get(StorageKey.ApiConfigurations)
+  const apiConfigurationsString: string | null = await localStorage.get(StorageKey.ApiConfigurations)
 
-  const existingApiConfigurations: object = JSON.parse(maybeCredentials.getOrElse("{}"))
-  const apiConfiguration: ApiConfiguration = {
+  const existingApiConfigurations: ApiConfigurations | {} =
+    map(apiConfigurationsString, stringValue => zodParse(ApiConfigurations, JSON.parse(stringValue))) ?? {}
+
+  const apiConfiguration: ApiConfiguration = ApiConfiguration.parse({
     serverUrl: server.apiUrl,
     authenticationToken: authenticationCookie.value
-  }
+  })
 
-  const updatedCredentials = { ...existingApiConfigurations, [server.name]: apiConfiguration }
+  const updatedApiServers = zodParse(ApiServers, ({ ...existingApiConfigurations, [server.name]: apiConfiguration }))
 
-  await localStorage.put(StorageKey.ApiConfigurations, JSON.stringify(updatedCredentials))
+  await localStorage.put(StorageKey.ApiConfigurations, JSON.stringify(updatedApiServers))
 }
 
 const run =
   async (apiServers: ApiServers) => {
     await initialiseServer(apiServers.production).catch(console.error)
 
-    if (apiServers.productionFallback != undefined) {
-      await initialiseServer(apiServers.productionFallback).catch(console.error)
+    if (apiServers.fallback != null) {
+      await initialiseServer(apiServers[ApiName.Fallback]).catch(console.error)
     }
   }
 
-run(API_SERVERS)
+setInterval(() => run(API_SERVERS), 30_000)

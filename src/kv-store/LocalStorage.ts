@@ -1,36 +1,37 @@
 import { KeyValueStore } from "./KeyValueStore"
-import { Maybe, None, Some } from "monet"
+import { map } from "../helpers/TypeUtils"
 import StorageArea = chrome.storage.StorageArea
 
 export class LocalStorage implements KeyValueStore<string, string> {
   constructor(readonly storageArea: StorageArea) {
   }
 
-  get(key: string): Promise<Maybe<string>> {
-    return new Promise<Maybe<string>>((resolve) => {
+  get(key: string): Promise<string | null> {
+    return new Promise<string | null>((resolve) => {
       this.storageArea.get(key, (result) => {
-        resolve(Maybe.fromFalsy(result).flatMap((value) => Maybe.fromFalsy(value[key])))
+        resolve(map(result, result => result[key]))
       })
     })
   }
 
-  put(key: string, value: string): Promise<Maybe<string>> {
-    return this.get(key).then(
-      (previous) =>
-        new Promise((resolve) => {
-          this.storageArea.set({ [key]: value }, () => {
-            resolve(previous)
-          })
-        })
-    )
+  async put(key: string, value: string): Promise<string | null> {
+    const existing = await this.get(key)
+
+    return new Promise((resolve) => {
+      this.storageArea.set({ [key]: value }, () => {
+        resolve(existing)
+      })
+    })
   }
 
-  remove(key: string): Promise<Maybe<string>> {
-    return this.get(key).then((result) =>
-      result.fold<Promise<Maybe<string>>>(Promise.resolve(None()))(
-        (value) => new Promise<Maybe<string>>((resolve) => this.storageArea.remove(key, () => resolve(Some(value))))
-      )
-    )
+  async remove(key: string): Promise<string | null> {
+    const existing = await this.get(key)
+
+    if (existing != null) {
+      return new Promise<string>((resolve) => this.storageArea.remove(key, () => resolve(existing)))
+    } else {
+      return null
+    }
   }
 }
 

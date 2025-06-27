@@ -1,13 +1,12 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
-import { Maybe } from "monet"
 
 class SpankBangVideoSiteHandler implements VideoSiteHandler {
-  buttonContainer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.getElementById("player_wrapper_outer"))
+  buttonContainer(document: Document): HTMLElement | null {
+    return document.getElementById("player_wrapper_outer")
   }
 
   isVideoPage(document: Document): boolean {
-    return Maybe.fromNull(document.getElementById("video")).isJust()
+    return document.getElementById("video") != null
   }
 
   isMatch(url: URL): boolean {

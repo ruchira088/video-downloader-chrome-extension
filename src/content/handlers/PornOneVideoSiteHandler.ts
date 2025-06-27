@@ -1,17 +1,17 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
-import { Maybe } from "monet"
+import { map } from "../../helpers/TypeUtils"
 
 class PornOneVideoSiteHandler implements VideoSiteHandler {
-  buttonContainer(document: Document): Maybe<Element> {
-    return this.videoPlayer(document).flatMap(element => Maybe.fromNull(element.parentElement))
+  buttonContainer(document: Document): HTMLElement | null {
+    return map(this.videoPlayer(document), element => element.parentElement) ?? null
   }
 
   isVideoPage(document: Document): boolean {
-    return this.videoPlayer(document).isJust()
+    return this.videoPlayer(document) != null
   }
 
-  videoPlayer(document: Document): Maybe<Element> {
-    return Maybe.fromNull(document.getElementById("pornone-video-player"))
+  videoPlayer(document: Document): HTMLElement | null {
+    return document.getElementById("pornone-video-player")
   }
 
   isMatch(url: URL): boolean {

@@ -1,6 +1,6 @@
+import { z } from "zod/v4"
+import { ZodDateTime } from "../../models/Zod"
 import { VideoMetadata } from "./VideoMetadata"
-import { Moment } from "moment"
-import { Maybe } from "monet"
 
 export enum SchedulingStatus {
   Active = "Active",
@@ -15,11 +15,13 @@ export enum SchedulingStatus {
   Deleted = "Deleted"
 }
 
-export interface ScheduledVideoDownload {
-  readonly scheduledAt: Moment
-  readonly lastUpdatedAt: Moment
-  readonly status: SchedulingStatus
-  readonly downloadedBytes: number
-  readonly videoMetadata: VideoMetadata
-  readonly completedAt: Maybe<Moment>
-}
+export const ScheduledVideoDownload = z.object({
+  scheduledAt: ZodDateTime,
+  lastUpdatedAt: ZodDateTime,
+  status: z.enum(SchedulingStatus),
+  downloadedBytes: z.number().int(),
+  videoMetadata: VideoMetadata,
+  completedAt: ZodDateTime.nullish()
+})
+
+export type ScheduledVideoDownload = z.infer<typeof ScheduledVideoDownload>

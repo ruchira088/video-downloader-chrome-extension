@@ -1,12 +1,15 @@
-import { Duration } from "moment"
 import { FileResource } from "./FileResource"
+import { z } from "zod/v4"
+import { ZodDuration } from "../../models/Zod"
 
-export interface VideoMetadata {
-  readonly url: string
-  readonly id: string
-  readonly videoSite: string
-  readonly title: string
-  readonly duration: Duration
-  readonly size: number
-  readonly thumbnail: FileResource
-}
+export const VideoMetadata = z.object({
+  url: z.string(),
+  id: z.string(),
+  videoSite: z.string(),
+  title: z.string(),
+  duration: ZodDuration,
+  size: z.number().int(),
+  thumbnail: FileResource
+})
+
+export type VideoMetadata = z.infer<typeof VideoMetadata>
