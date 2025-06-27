@@ -1,4 +1,5 @@
 const path = require("path")
+const fs = require("fs")
 const CopyPlugin = require("copy-webpack-plugin")
 const packageJson = require("./package.json")
 
@@ -8,6 +9,12 @@ const manifestFile = (json) => ({
   description: packageJson.description,
   ...json,
 })
+
+const buildTarget = process.env.BUILD_TARGET ?? path.resolve(__dirname, "build")
+
+console.log(`Building to ${buildTarget}`)
+
+fs.rmSync(buildTarget, { recursive: true, force: true })
 
 module.exports = {
   mode: process.env.NODE_ENV || "development",
@@ -44,7 +51,7 @@ module.exports = {
   },
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "build"),
+    path: buildTarget,
     publicPath: "",
   },
   plugins: [
