@@ -21,7 +21,6 @@ abstract class TxxxNetworkVideoSiteHandler implements VideoSiteHandler {
 class TxxxVideoSiteHandler extends TxxxNetworkVideoSiteHandler {
   readonly hostname: string = "txxx.com"
   readonly containerCss: string = "div.video-title"
-
 }
 
 class UPorniaVideoSiteHandler extends TxxxNetworkVideoSiteHandler {

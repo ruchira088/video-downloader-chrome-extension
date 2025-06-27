@@ -15,7 +15,7 @@ module.exports = {
   entry: {
     content: path.resolve(__dirname, "src", "content", "Content.ts"),
     "action-page": path.resolve(__dirname, "src", "action-page", "ActionPage.tsx"),
-    "service-worker": path.resolve(__dirname, "src", "worker", "ServiceWorker.ts")
+    "service-worker": path.resolve(__dirname, "src", "worker", "ServiceWorker.ts"),
   },
   module: {
     rules: [
@@ -31,12 +31,12 @@ module.exports = {
             loader: "file-loader",
             options: {
               outputPath: "styles/",
-              name: "[name].css"
-            }
+              name: "[name].css",
+            },
           },
-          "sass-loader"
-        ]
-      }
+          "sass-loader",
+        ],
+      },
     ],
   },
   resolve: {
@@ -45,7 +45,7 @@ module.exports = {
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "build"),
-    publicPath: ""
+    publicPath: "",
   },
   plugins: [
     new CopyPlugin({
@@ -57,7 +57,7 @@ module.exports = {
         },
         { from: "*.html", context: "src/action-page" },
         { from: "icons/*" },
-        { from: "images/*" }
+        { from: "images/*" },
       ],
     }),
   ],

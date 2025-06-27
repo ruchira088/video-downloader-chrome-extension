@@ -1,3 +1,3 @@
 export enum StorageKey {
-  ApiConfigurations = "ApiConfigurations"
+  ApiConfigurations = "ApiConfigurations",
 }

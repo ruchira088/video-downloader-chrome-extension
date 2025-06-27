@@ -7,8 +7,7 @@ export interface CookieStore {
 }
 
 class ChromeCookieStore implements CookieStore {
-  constructor(readonly url: string) {
-  }
+  constructor(readonly url: string) {}
 
   async get(key: string): Promise<Cookie | null> {
     const cookies = await this.getAll()
@@ -16,11 +15,7 @@ class ChromeCookieStore implements CookieStore {
   }
 
   getAll(): Promise<Cookie[]> {
-    return new Promise((resolve) =>
-      chrome.cookies.getAll({ url: this.url }, cookies =>
-        resolve(cookies)
-      )
-    )
+    return new Promise((resolve) => chrome.cookies.getAll({ url: this.url }, (cookies) => resolve(cookies)))
   }
 }
 

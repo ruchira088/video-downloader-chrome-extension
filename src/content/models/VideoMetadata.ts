@@ -9,7 +9,7 @@ export const VideoMetadata = z.object({
   title: z.string(),
   duration: ZodDuration,
   size: z.number().int(),
-  thumbnail: FileResource
+  thumbnail: FileResource,
 })
 
 export type VideoMetadata = z.infer<typeof VideoMetadata>

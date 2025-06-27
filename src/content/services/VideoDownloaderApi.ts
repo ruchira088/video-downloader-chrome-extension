@@ -16,44 +16,45 @@ export interface VideoDownloaderApi {
 }
 
 class VideoDownloaderApiImpl implements VideoDownloaderApi {
-  constructor(readonly apiConfigurations: ApiConfigurations) {
-  }
+  constructor(readonly apiConfigurations: ApiConfigurations) {}
 
   scheduleVideoDownload(videoUrl: string): Promise<boolean> {
-    return this._runActions(
-      apiConfiguration => this._scheduleVideoDownload(videoUrl, apiConfiguration)
-    )
+    return this._runActions((apiConfiguration) => this._scheduleVideoDownload(videoUrl, apiConfiguration))
   }
 
   async _scheduleVideoDownload(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<boolean> {
-    const response: Response =
-      await fetch(`${apiConfiguration.serverUrl}/schedule`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiConfiguration.authenticationToken}`
-        },
-        body: JSON.stringify({ url: videoUrl })
-      })
+    const response: Response = await fetch(`${apiConfiguration.serverUrl}/schedule`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiConfiguration.authenticationToken}`,
+      },
+      body: JSON.stringify({ url: videoUrl }),
+    })
 
     return response.ok
   }
 
   async searchScheduledVideosByUrl(videoUrl: string): Promise<ScheduledVideoDownload[]> {
-    const searchResults = await this._runActions(
-      (apiConfiguration) => this._searchScheduledVideosByUrl(videoUrl, apiConfiguration)
+    const searchResults = await this._runActions((apiConfiguration) =>
+      this._searchScheduledVideosByUrl(videoUrl, apiConfiguration),
     )
 
     return searchResults.results
   }
 
-  async _searchScheduledVideosByUrl(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<SearchResult<ScheduledVideoDownload>> {
-    const response =
-      await fetch(`${apiConfiguration.serverUrl}/schedule/search?video-url=${encodeURIComponent(videoUrl)}`, {
+  async _searchScheduledVideosByUrl(
+    videoUrl: string,
+    apiConfiguration: ApiConfiguration,
+  ): Promise<SearchResult<ScheduledVideoDownload>> {
+    const response = await fetch(
+      `${apiConfiguration.serverUrl}/schedule/search?video-url=${encodeURIComponent(videoUrl)}`,
+      {
         headers: {
-          Authorization: `Bearer ${apiConfiguration.authenticationToken}`
-        }
-      })
+          Authorization: `Bearer ${apiConfiguration.authenticationToken}`,
+        },
+      },
+    )
 
     if (response.ok) {
       const responseBody = await response.json()
@@ -65,34 +66,29 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
   }
 
   gatherVideoMetadata(videoUrl: string): Promise<VideoMetadata> {
-    return this._runActions(
-      (apiConfiguration) => this._gatherVideoMetadata(videoUrl, apiConfiguration)
-    )
+    return this._runActions((apiConfiguration) => this._gatherVideoMetadata(videoUrl, apiConfiguration))
   }
 
   async _gatherVideoMetadata(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<VideoMetadata> {
-    const response =
-      await fetch(`${apiConfiguration.serverUrl}/videos/metadata`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiConfiguration.authenticationToken}`
-        },
-        body: JSON.stringify({ url: videoUrl })
-      })
+    const response = await fetch(`${apiConfiguration.serverUrl}/videos/metadata`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiConfiguration.authenticationToken}`,
+      },
+      body: JSON.stringify({ url: videoUrl }),
+    })
 
     const body = await response.json()
 
     if (response.ok) {
       return zodParse(VideoMetadata, body)
     } else {
-      return Promise.reject(new Error(`Received non-OK response from server: ${body}` ))
+      return Promise.reject(new Error(`Received non-OK response from server: ${body}`))
     }
   }
 
-  async _runActions<T>(
-    onServer: (apiConfiguration: ApiConfiguration) => Promise<T>
-  ): Promise<T> {
+  async _runActions<T>(onServer: (apiConfiguration: ApiConfiguration) => Promise<T>): Promise<T> {
     if (await this._isServerOnline(this.apiConfigurations.production)) {
       return onServer(this.apiConfigurations.production!)
     } else if (await this._isServerOnline(this.apiConfigurations.fallback)) {

@@ -1,4 +1,5 @@
-
 export enum HealthStatus {
-  Online = "Online", Offline = "Offline", Pending = "Pending"
+  Online = "Online",
+  Offline = "Offline",
+  Pending = "Pending",
 }

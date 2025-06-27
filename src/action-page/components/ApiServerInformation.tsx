@@ -10,7 +10,7 @@ type ApiServerInformation = {
   readonly server: Server
 }
 
-const ApiServerInformation: FC<ApiServerInformation> = props => {
+const ApiServerInformation: FC<ApiServerInformation> = (props) => {
   const [status, setStatus] = useState(HealthStatus.Pending)
   const [ping, setPing] = useState<Duration | undefined>(undefined)
   const [serviceInformation, setServiceInformation] = useState<ServiceInformation | undefined>(undefined)
@@ -47,15 +47,21 @@ const ApiServerInformation: FC<ApiServerInformation> = props => {
     <div>
       <div>{props.server.label}</div>
       <div>{props.server.apiUrl}</div>
-      {map(ping, ping => <div>{ping.toMillis()}ms</div>)}
+      {map(ping, (ping) => (
+        <div>{ping.toMillis()}ms</div>
+      ))}
       <div>{status}</div>
-      {map(serviceInformation, serviceInformation =>
+      {map(serviceInformation, (serviceInformation) => (
         <>
-          <div>{serviceInformation.serviceVersion} ({serviceInformation.gitCommit})</div>
-          <div>{serviceInformation.buildTimestamp.toLocaleString(DateTime.DATETIME_MED)} ({serviceInformation.buildTimestamp.toRelative({ base: DateTime.now() })})</div>
+          <div>
+            {serviceInformation.serviceVersion} ({serviceInformation.gitCommit})
+          </div>
+          <div>
+            {serviceInformation.buildTimestamp.toLocaleString(DateTime.DATETIME_SHORT)} (
+            {serviceInformation.buildTimestamp.toRelative({ base: DateTime.now() })})
+          </div>
         </>
-      )
-      }
+      ))}
     </div>
   )
 }

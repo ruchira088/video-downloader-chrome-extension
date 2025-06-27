@@ -3,7 +3,7 @@ import { map } from "../../helpers/TypeUtils"
 
 class PornOneVideoSiteHandler implements VideoSiteHandler {
   buttonContainer(document: Document): HTMLElement | null {
-    return map(this.videoPlayer(document), element => element.parentElement) ?? null
+    return map(this.videoPlayer(document), (element) => element.parentElement) ?? null
   }
 
   isVideoPage(document: Document): boolean {

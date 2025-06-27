@@ -6,7 +6,7 @@ export const FileResource = z.object({
   createdAt: ZodDateTime,
   path: z.string(),
   mediaType: z.string(),
-  size: z.number().int()
+  size: z.number().int(),
 })
 
 export type FileResource = z.infer<typeof FileResource>

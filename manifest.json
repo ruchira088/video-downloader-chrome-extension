@@ -7,26 +7,13 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://*/*"
-      ],
-      "js": [
-        "content.bundle.js"
-      ],
-      "css": [
-        "styles/content.css"
-      ]
+      "matches": ["https://*/*"],
+      "js": ["content.bundle.js"],
+      "css": ["styles/content.css"]
     }
   ],
-  "permissions": [
-    "storage",
-    "cookies"
-  ],
-  "host_permissions": [
-    "*://localhost/*",
-    "*://*.localhost/*",
-    "*://*.ruchij.com/*"
-  ],
+  "permissions": ["storage", "cookies"],
+  "host_permissions": ["*://localhost/*", "*://*.localhost/*", "*://*.ruchij.com/*"],
   "action": {
     "default_popup": "index.html"
   },
@@ -35,20 +22,12 @@
   },
   "web_accessible_resources": [
     {
-      "resources": [
-        "icons/download-icon.svg"
-      ],
-      "matches": [
-        "https://*/*"
-      ]
+      "resources": ["icons/download-icon.svg"],
+      "matches": ["https://*/*"]
     },
     {
-      "resources": [
-        "icons/download-icon.svg"
-      ],
-      "matches": [
-        "https://*/*"
-      ]
+      "resources": ["icons/download-icon.svg"],
+      "matches": ["https://*/*"]
     }
   ]
 }

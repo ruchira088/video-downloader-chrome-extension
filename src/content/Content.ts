@@ -10,14 +10,14 @@ import { map } from "../helpers/TypeUtils"
 const DOWNLOAD_SECTION_ID = "video-downloader"
 const FRONT_END_URL = "https://video.home.ruchij.com"
 
-
 window.onload = () => {
   setInterval(() => run(document, window.location.href), 5000)
 }
 
 const run = async (document: Document, url: string): Promise<boolean> => {
-  const videoSiteHandler: VideoSiteHandler | undefined  =
-    videoSiteHandlers.find((videoSiteHandler) => videoSiteHandler.isMatch(new URL(url)))
+  const videoSiteHandler: VideoSiteHandler | undefined = videoSiteHandlers.find((videoSiteHandler) =>
+    videoSiteHandler.isMatch(new URL(url)),
+  )
 
   if (videoSiteHandler === undefined) {
     return false
@@ -81,11 +81,13 @@ const initializeDownloadButton = async (
   api: VideoDownloaderApi,
   downloadSection: HTMLDivElement,
   downloadButton: HTMLButtonElement,
-  videoUrl: string
+  videoUrl: string,
 ): Promise<void> => {
   try {
     const scheduledVideoDownloads = await api.searchScheduledVideosByUrl(videoUrl)
-    const downloadedVideo = scheduledVideoDownloads.find(scheduledVideoDownload => scheduledVideoDownload.status === SchedulingStatus.Completed)
+    const downloadedVideo = scheduledVideoDownloads.find(
+      (scheduledVideoDownload) => scheduledVideoDownload.status === SchedulingStatus.Completed,
+    )
 
     if (downloadedVideo != undefined) {
       downloadButton.textContent = "Go to video"
@@ -96,7 +98,6 @@ const initializeDownloadButton = async (
         const url = `${FRONT_END_URL}/video/${downloadedVideo.videoMetadata.id}`
         window.open(url, "_blank")
       }
-
     } else if (scheduledVideoDownloads.length > 0) {
       downloadButton.textContent = "Scheduled"
       downloadButton.className = "scheduled"
@@ -126,16 +127,14 @@ const initializeDownloadButton = async (
   } catch (error) {
     const { errorMessages } = error as { errorMessages: string[] | undefined }
 
-    return Promise.reject(
-      new Error(map(errorMessages, messages => messages.join(", ")) ?? "Unknown error")
-    )
+    return Promise.reject(new Error(map(errorMessages, (messages) => messages.join(", ")) ?? "Unknown error"))
   }
 }
 
 export const initializeElements = async (
   downloadSection: HTMLDivElement,
   downloadButton: HTMLButtonElement,
-  url: string
+  url: string,
 ): Promise<void> => {
   try {
     const videoDownloaderApi = await createVideoDownloaderApi(new LocalStorage(chrome.storage.local))

@@ -9,16 +9,17 @@ import {
   hdZogVideoSiteHandler,
   hotMovsVideoSiteHandler,
   txxxVideoSiteHandler,
-  uporniaVideoSiteHandler
+  uporniaVideoSiteHandler,
 } from "./TxxxNetworkVideoSiteHandler"
-import SxyPrnVideoSiteHandler from "./SxyPrnVideoSiteHandler"
+import sxyPrnVideoSiteHandler from "./SxyPrnVideoSiteHandler"
+import freshPornoVideoSiteHandler from "./FreshPornoVideoSiteHandler"
 
 export interface VideoSiteHandler {
-  isMatch: (url: URL) => boolean;
+  isMatch: (url: URL) => boolean
 
-  isVideoPage: (document: Document) => boolean;
+  isVideoPage: (document: Document) => boolean
 
-  buttonContainer: (document: Document) => HTMLElement | null;
+  buttonContainer: (document: Document) => HTMLElement | null
 }
 
 export const videoSiteHandlers: VideoSiteHandler[] = [
@@ -33,5 +34,6 @@ export const videoSiteHandlers: VideoSiteHandler[] = [
   txxxVideoSiteHandler,
   hotMovsVideoSiteHandler,
   uporniaVideoSiteHandler,
-  SxyPrnVideoSiteHandler
+  sxyPrnVideoSiteHandler,
+  freshPornoVideoSiteHandler,
 ]

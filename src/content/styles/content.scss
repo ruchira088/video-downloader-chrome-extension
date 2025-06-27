@@ -1,7 +1,8 @@
 #video-downloader {
   margin-top: 1em;
 
-  button, .message-board {
+  button,
+  .message-board {
     background-color: white;
     color: black;
   }
@@ -22,11 +23,9 @@
     }
 
     &.checking {
-
     }
 
     &.scheduled {
-
     }
 
     &.completed {

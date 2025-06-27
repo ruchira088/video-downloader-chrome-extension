@@ -12,7 +12,7 @@ export enum SchedulingStatus {
   WorkersPaused = "WorkersPaused",
   Paused = "Paused",
   Queued = "Queued",
-  Deleted = "Deleted"
+  Deleted = "Deleted",
 }
 
 export const ScheduledVideoDownload = z.object({
@@ -21,7 +21,7 @@ export const ScheduledVideoDownload = z.object({
   status: z.enum(SchedulingStatus),
   downloadedBytes: z.number().int(),
   videoMetadata: VideoMetadata,
-  completedAt: ZodDateTime.nullish()
+  completedAt: ZodDateTime.nullish(),
 })
 
 export type ScheduledVideoDownload = z.infer<typeof ScheduledVideoDownload>
