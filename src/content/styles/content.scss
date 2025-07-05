@@ -41,3 +41,19 @@
     border: black solid 0.25em;
   }
 }
+
+.toast {
+  position: fixed;
+  top: 1em;
+  right: 1em;
+  color: white;
+  padding: 1em;
+  font-weight: bold;
+  border-radius: 0.5em;
+  width: 30em;
+  z-index: 2147483647; // Max z-index value to ensure the element is always on top
+
+  &.success {
+    background: green;
+  }
+}

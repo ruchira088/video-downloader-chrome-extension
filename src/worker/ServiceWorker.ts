@@ -5,8 +5,9 @@ import { ApiConfiguration, ApiConfigurations } from "../models/ApiConfiguration"
 import { API_SERVERS, ApiName, ApiServers, Server } from "../models/Server"
 import { filter, map } from "../helpers/TypeUtils"
 import { zodParse } from "../models/Zod"
-import Cookie = chrome.cookies.Cookie
 import { createVideoDownloaderApi, VideoDownloaderApi } from "../services/VideoDownloaderApi"
+import Cookie = chrome.cookies.Cookie
+import Tab = chrome.tabs.Tab
 
 const initialiseServer = async (server: Server) => {
   const cookieStore = new ChromeCookieStore(server.apiUrl)
@@ -40,30 +41,47 @@ const initialiseServer = async (server: Server) => {
   await localStorage.put(StorageKey.ApiConfigurations, JSON.stringify(updatedApiServers))
 }
 
+const sendNotification = async (videoUrl: string, tab?: Tab) => {
+  if (tab?.id != null) {
+    await chrome.tabs.sendMessage(tab.id, {
+      type: "video-downloader-notification",
+      videoUrl,
+    })
+  } else {
+    throw new Error(`Tab ID is undefined: ${tab}`)
+  }
+}
+
 const init = () => {
   chrome.runtime.onInstalled.addListener(() => {
-    chrome.contextMenus.onClicked.addListener(async (info) => {
-      const localStorage = new LocalStorage(chrome.storage.local)
-      const videoDownloaderApi: VideoDownloaderApi = await createVideoDownloaderApi(localStorage)
+    chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+      try {
+        const localStorage = new LocalStorage(chrome.storage.local)
+        const videoDownloaderApi: VideoDownloaderApi = await createVideoDownloaderApi(localStorage)
 
-      if (info.menuItemId === "download-page-url") {
-        const videoUrl = info.pageUrl
+        if (info.menuItemId === "download-page-url") {
+          const videoUrl = info.pageUrl
 
-        if (videoUrl != null) {
-          await videoDownloaderApi.scheduleVideoDownload(videoUrl)
+          if (videoUrl != null) {
+            await videoDownloaderApi.scheduleVideoDownload(videoUrl)
+            await sendNotification(videoUrl, tab)
+          } else {
+            throw new Error(`Page URL not found: ${info}`)
+          }
+        } else if (info.menuItemId === "download-link-url") {
+          const videoUrl = info.linkUrl
+
+          if (videoUrl != null) {
+            await videoDownloaderApi.scheduleVideoDownload(videoUrl)
+            await sendNotification(videoUrl, tab)
+          } else {
+            throw new Error(`Link URL not found: ${info}`)
+          }
         } else {
-          throw new Error(`Page URL not found: ${info}`)
+          throw new Error(`Unknown menu item clicked: ${info}`)
         }
-      } else if (info.menuItemId === "download-link-url") {
-        const videoUrl = info.linkUrl
-
-        if (videoUrl != null) {
-          await videoDownloaderApi.scheduleVideoDownload(videoUrl)
-        } else {
-          throw new Error(`Link URL not found: ${info}`)
-        }
-      } else {
-        throw new Error(`Unknown menu item clicked: ${info}`)
+      } catch (error) {
+        console.error(error)
       }
     })
 

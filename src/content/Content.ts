@@ -11,6 +11,12 @@ const DOWNLOAD_SECTION_ID = "video-downloader"
 const FRONT_END_URL = "https://video.home.ruchij.com"
 
 window.onload = () => {
+  chrome.runtime.onMessage.addListener((message) => {
+    if (message.type === "video-downloader-notification") {
+      notificationToast(`Scheduled: ${message.videoUrl}`, NotificationType.Success)
+    }
+  })
+
   setInterval(() => run(document, window.location.href), 5000)
 }
 
@@ -153,4 +159,20 @@ const displayMessage = (downloadSection: HTMLDivElement, message: string): HTMLE
   messageContainer.textContent = message
 
   return downloadSection.appendChild(messageContainer)
+}
+
+enum NotificationType {
+  Success = "success",
+  Error = "error",
+  Info = "info",
+  Warning = "warning",
+}
+
+const notificationToast = (message: string, notificationType: NotificationType) => {
+  const toast = document.createElement("div")
+  toast.className = `toast ${notificationType}`
+  toast.textContent = message
+
+  document.body.appendChild(toast)
+  setTimeout(() => toast.remove(), 3000)
 }
