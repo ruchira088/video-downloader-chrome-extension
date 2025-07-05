@@ -10,7 +10,7 @@
     "deploy": "BUILD_TARGET='/Users/ruchira/Software/video-downloader-chrome-extension-build' npm run build"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.326",
+    "@types/chrome": "^0.0.329",
     "@types/luxon": "^3.6.2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
@@ -32,6 +32,6 @@
     "pretty-bytes": "^7.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "zod": "^3.25.67"
+    "zod": "^3.25.74"
   }
 }
