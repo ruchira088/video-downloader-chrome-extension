@@ -42,7 +42,7 @@ const initialiseServer = async (server: Server) => {
 
 const init = () => {
   chrome.runtime.onInstalled.addListener(() => {
-    chrome.contextMenus.onClicked.addListener(async info => {
+    chrome.contextMenus.onClicked.addListener(async (info) => {
       const localStorage = new LocalStorage(chrome.storage.local)
       const videoDownloaderApi: VideoDownloaderApi = await createVideoDownloaderApi(localStorage)
 
@@ -70,13 +70,13 @@ const init = () => {
     chrome.contextMenus.create({
       id: "download-page-url",
       title: "Download Page Video",
-      contexts: ["page"]
+      contexts: ["page"],
     })
 
     chrome.contextMenus.create({
       id: "download-link-url",
       title: "Download Video in Link",
-      contexts: ["link"]
+      contexts: ["link"],
     })
   })
 }
