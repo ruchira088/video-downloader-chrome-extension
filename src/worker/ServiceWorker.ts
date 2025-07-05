@@ -6,6 +6,7 @@ import { API_SERVERS, ApiName, ApiServers, Server } from "../models/Server"
 import { filter, map } from "../helpers/TypeUtils"
 import { zodParse } from "../models/Zod"
 import Cookie = chrome.cookies.Cookie
+import { createVideoDownloaderApi, VideoDownloaderApi } from "../services/VideoDownloaderApi"
 
 const initialiseServer = async (server: Server) => {
   const cookieStore = new ChromeCookieStore(server.apiUrl)
@@ -39,6 +40,47 @@ const initialiseServer = async (server: Server) => {
   await localStorage.put(StorageKey.ApiConfigurations, JSON.stringify(updatedApiServers))
 }
 
+const init = () => {
+  chrome.runtime.onInstalled.addListener(() => {
+    chrome.contextMenus.onClicked.addListener(async info => {
+      const localStorage = new LocalStorage(chrome.storage.local)
+      const videoDownloaderApi: VideoDownloaderApi = await createVideoDownloaderApi(localStorage)
+
+      if (info.menuItemId === "download-page-url") {
+        const videoUrl = info.pageUrl
+
+        if (videoUrl != null) {
+          await videoDownloaderApi.scheduleVideoDownload(videoUrl)
+        } else {
+          throw new Error(`Page URL not found: ${info}`)
+        }
+      } else if (info.menuItemId === "download-link-url") {
+        const videoUrl = info.linkUrl
+
+        if (videoUrl != null) {
+          await videoDownloaderApi.scheduleVideoDownload(videoUrl)
+        } else {
+          throw new Error(`Link URL not found: ${info}`)
+        }
+      } else {
+        throw new Error(`Unknown menu item clicked: ${info}`)
+      }
+    })
+
+    chrome.contextMenus.create({
+      id: "download-page-url",
+      title: "Download Page Video",
+      contexts: ["page"]
+    })
+
+    chrome.contextMenus.create({
+      id: "download-link-url",
+      title: "Download Video in Link",
+      contexts: ["link"]
+    })
+  })
+}
+
 const run = async (apiServers: ApiServers) => {
   await initialiseServer(apiServers.production).catch(console.error)
 
@@ -47,4 +89,5 @@ const run = async (apiServers: ApiServers) => {
   }
 }
 
+init()
 setInterval(() => run(API_SERVERS), 30_000)

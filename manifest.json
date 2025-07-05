@@ -12,7 +12,7 @@
       "css": ["styles/content.css"]
     }
   ],
-  "permissions": ["storage", "cookies"],
+  "permissions": ["storage", "cookies", "contextMenus"],
   "host_permissions": ["*://localhost/*", "*://*.localhost/*", "*://*.ruchij.com/*"],
   "action": {
     "default_popup": "index.html"

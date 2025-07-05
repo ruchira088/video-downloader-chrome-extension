@@ -1,6 +1,6 @@
 import prettyBytes from "pretty-bytes"
 import { VideoSiteHandler, videoSiteHandlers } from "./handlers/VideoSiteHandler"
-import { createVideoDownloaderApi, VideoDownloaderApi } from "./services/VideoDownloaderApi"
+import { createVideoDownloaderApi, VideoDownloaderApi } from "../services/VideoDownloaderApi"
 
 import "./styles/content.scss"
 import LocalStorage from "../kv-store/LocalStorage"

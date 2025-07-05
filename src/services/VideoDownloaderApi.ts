@@ -1,11 +1,11 @@
-import { LocalStorage } from "../../kv-store/LocalStorage"
-import { StorageKey } from "../../kv-store/StorageKey"
-import { KeyValueStore } from "../../kv-store/KeyValueStore"
-import { VideoMetadata } from "../models/VideoMetadata"
-import { ApiConfiguration, ApiConfigurations } from "../../models/ApiConfiguration"
-import { ScheduledVideoDownload } from "../models/ScheduledVideoDownload"
-import { SearchResult } from "../models/SearchResult"
-import { zodParse } from "../../models/Zod"
+import { LocalStorage } from "../kv-store/LocalStorage"
+import { StorageKey } from "../kv-store/StorageKey"
+import { KeyValueStore } from "../kv-store/KeyValueStore"
+import { VideoMetadata } from "../content/models/VideoMetadata"
+import { ApiConfiguration, ApiConfigurations } from "../models/ApiConfiguration"
+import { ScheduledVideoDownload } from "../content/models/ScheduledVideoDownload"
+import { SearchResult } from "../content/models/SearchResult"
+import { zodParse } from "../models/Zod"
 
 export interface VideoDownloaderApi {
   scheduleVideoDownload(videoUrl: string): Promise<boolean>
@@ -124,5 +124,5 @@ const apiConfigurations = async (keyValueStore: KeyValueStore<string, string>): 
   return apiConfigs
 }
 
-export const createVideoDownloaderApi = (localStorage: LocalStorage) =>
+export const createVideoDownloaderApi = (localStorage: LocalStorage): Promise<VideoDownloaderApi> =>
   apiConfigurations(localStorage).then((config) => new VideoDownloaderApiImpl(config))
