@@ -43,6 +43,7 @@ const initialiseServer = async (server: Server) => {
 
 const downloadVideoFromUrl = async (videoUrl: string, tab?: Tab) => {
   if (tab?.id != null) {
+    console.debug(`Downloading video from ${videoUrl}`)
     await chrome.tabs.sendMessage(tab.id, DownloadVideo.parse({ videoUrl }))
   } else {
     throw new Error(`Tab ID is undefined: ${tab}`)
@@ -73,7 +74,7 @@ const init = () => {
           throw new Error(`Unknown menu item clicked: ${info}`)
         }
       } catch (error) {
-        console.error(error)
+        console.error({ info, tab, error })
       }
     })
 

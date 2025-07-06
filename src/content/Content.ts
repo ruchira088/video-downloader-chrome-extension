@@ -13,8 +13,12 @@ import { VideoMetadata } from "./models/VideoMetadata"
 const DOWNLOAD_SECTION_ID = "video-downloader"
 const FRONT_END_URL = "https://video.home.ruchij.com"
 
-window.onload = () => {
+const initialise = () => {
+  console.debug("Initializing content script for video downloader")
+
   chrome.runtime.onMessage.addListener(async (incomingMessage) => {
+    console.debug("Received message", incomingMessage)
+
     const message: Message = zodParse(Message, incomingMessage)
 
     if (message.type === MessageType.DownloadVideo) {
@@ -231,3 +235,5 @@ class VideoDownloaderApiWithNotifications implements VideoDownloaderApi {
     return this.videoDownloaderApi.searchScheduledVideosByUrl(videoUrl)
   }
 }
+
+initialise()
