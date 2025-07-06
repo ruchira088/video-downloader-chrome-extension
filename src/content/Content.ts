@@ -1,19 +1,25 @@
 import prettyBytes from "pretty-bytes"
 import { VideoSiteHandler, videoSiteHandlers } from "./handlers/VideoSiteHandler"
-import { createVideoDownloaderApi, VideoDownloaderApi } from "../services/VideoDownloaderApi"
+import { createVideoDownloaderApi, VideoDownloaderApi } from "./services/VideoDownloaderApi"
 
 import "./styles/content.scss"
 import LocalStorage from "../kv-store/LocalStorage"
-import { SchedulingStatus } from "./models/ScheduledVideoDownload"
+import { ScheduledVideoDownload, SchedulingStatus } from "./models/ScheduledVideoDownload"
 import { map } from "../helpers/TypeUtils"
+import { Message, MessageType } from "../models/Message"
+import { zodParse } from "../models/Zod"
+import { VideoMetadata } from "./models/VideoMetadata"
 
 const DOWNLOAD_SECTION_ID = "video-downloader"
 const FRONT_END_URL = "https://video.home.ruchij.com"
 
 window.onload = () => {
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message.type === "video-downloader-notification") {
-      notificationToast(`Scheduled: ${message.videoUrl}`, NotificationType.Success)
+  chrome.runtime.onMessage.addListener(async (incomingMessage) => {
+    const message: Message = zodParse(Message, incomingMessage)
+
+    if (message.type === MessageType.DownloadVideo) {
+      const videoDownloaderApi = await createVideoDownloaderApiWithNotifications()
+      await videoDownloaderApi.scheduleVideoDownload(message.videoUrl)
     }
   })
 
@@ -143,7 +149,7 @@ export const initializeElements = async (
   url: string,
 ): Promise<void> => {
   try {
-    const videoDownloaderApi = await createVideoDownloaderApi(new LocalStorage(chrome.storage.local))
+    const videoDownloaderApi = await createVideoDownloaderApiWithNotifications()
     await initializeDownloadButton(videoDownloaderApi, downloadSection, downloadButton, url)
   } catch (error) {
     downloadButton.textContent = "Error"
@@ -151,6 +157,13 @@ export const initializeElements = async (
 
     displayMessage(downloadSection, error?.toString() ?? "Unknown error")
   }
+}
+
+const createVideoDownloaderApiWithNotifications = async (): Promise<VideoDownloaderApi> => {
+  const localStorage: LocalStorage = new LocalStorage(chrome.storage.local)
+  const videoDownloaderApi: VideoDownloaderApi = await createVideoDownloaderApi(localStorage)
+
+  return new VideoDownloaderApiWithNotifications(videoDownloaderApi)
 }
 
 const displayMessage = (downloadSection: HTMLDivElement, message: string): HTMLElement => {
@@ -174,5 +187,47 @@ const notificationToast = (message: string, notificationType: NotificationType) 
   toast.textContent = message
 
   document.body.appendChild(toast)
-  setTimeout(() => toast.remove(), 3000)
+
+  setTimeout(() => toast.remove(), 2_975)
+}
+
+class VideoDownloaderApiWithNotifications implements VideoDownloaderApi {
+  constructor(private readonly videoDownloaderApi: VideoDownloaderApi) {}
+
+  gatherVideoMetadata(videoUrl: string): Promise<VideoMetadata> {
+    return this.videoDownloaderApi.gatherVideoMetadata(videoUrl)
+  }
+
+  async scheduleVideoDownload(videoUrl: string): Promise<number> {
+    try {
+      const statusCode: number = await this.videoDownloaderApi.scheduleVideoDownload(videoUrl)
+
+      if (statusCode === 200) {
+        notificationToast(`Already scheduled: ${videoUrl}`, NotificationType.Info)
+      } else if (statusCode === 201) {
+        notificationToast(`Scheduled: ${videoUrl}`, NotificationType.Success)
+      } else {
+        throw new Error(`Unexpected status code: ${statusCode}`)
+      }
+
+      return statusCode
+    } catch (error) {
+      if (error instanceof Response) {
+        const jsonBody = await error.json()
+
+        notificationToast(
+          `Error occurred scheduling videoUrl=${videoUrl}\n${JSON.stringify(jsonBody, null, 2)}`,
+          error.status < 500 ? NotificationType.Warning : NotificationType.Error,
+        )
+
+        return error.status
+      }
+
+      throw error
+    }
+  }
+
+  searchScheduledVideosByUrl(videoUrl: string): Promise<ScheduledVideoDownload[]> {
+    return this.videoDownloaderApi.searchScheduledVideosByUrl(videoUrl)
+  }
 }

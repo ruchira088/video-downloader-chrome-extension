@@ -1,14 +1,14 @@
-import { LocalStorage } from "../kv-store/LocalStorage"
-import { StorageKey } from "../kv-store/StorageKey"
-import { KeyValueStore } from "../kv-store/KeyValueStore"
-import { VideoMetadata } from "../content/models/VideoMetadata"
-import { ApiConfiguration, ApiConfigurations } from "../models/ApiConfiguration"
-import { ScheduledVideoDownload } from "../content/models/ScheduledVideoDownload"
-import { SearchResult } from "../content/models/SearchResult"
-import { zodParse } from "../models/Zod"
+import { LocalStorage } from "../../kv-store/LocalStorage"
+import { StorageKey } from "../../kv-store/StorageKey"
+import { KeyValueStore } from "../../kv-store/KeyValueStore"
+import { VideoMetadata } from "../models/VideoMetadata"
+import { ApiConfiguration, ApiConfigurations } from "../../models/ApiConfiguration"
+import { ScheduledVideoDownload } from "../models/ScheduledVideoDownload"
+import { SearchResult } from "../models/SearchResult"
+import { zodParse } from "../../models/Zod"
 
 export interface VideoDownloaderApi {
-  scheduleVideoDownload(videoUrl: string): Promise<boolean>
+  scheduleVideoDownload(videoUrl: string): Promise<number>
 
   gatherVideoMetadata(videoUrl: string): Promise<VideoMetadata>
 
@@ -18,11 +18,11 @@ export interface VideoDownloaderApi {
 class VideoDownloaderApiImpl implements VideoDownloaderApi {
   constructor(readonly apiConfigurations: ApiConfigurations) {}
 
-  scheduleVideoDownload(videoUrl: string): Promise<boolean> {
+  scheduleVideoDownload(videoUrl: string): Promise<number> {
     return this._runActions((apiConfiguration) => this._scheduleVideoDownload(videoUrl, apiConfiguration))
   }
 
-  async _scheduleVideoDownload(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<boolean> {
+  async _scheduleVideoDownload(videoUrl: string, apiConfiguration: ApiConfiguration): Promise<number> {
     const response: Response = await fetch(`${apiConfiguration.serverUrl}/schedule`, {
       method: "POST",
       headers: {
@@ -32,7 +32,11 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
       body: JSON.stringify({ url: videoUrl }),
     })
 
-    return response.ok
+    if (response.ok) {
+      return response.status
+    } else {
+      return Promise.reject(response)
+    }
   }
 
   async searchScheduledVideosByUrl(videoUrl: string): Promise<ScheduledVideoDownload[]> {

@@ -46,13 +46,16 @@
   position: fixed;
   top: 1em;
   right: 1em;
-  color: white;
+  color: white !important;
   padding: 1em;
   font-weight: bold;
   border-radius: 0.5em;
+  border: none;
   max-width: 30em;
   z-index: 2147483647; // Max z-index value to ensure the element is always on top
-  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation:
+    fadein 0.5s,
+    fadeout 0.5s 2.5s;
 
   @keyframes fadein {
     from {
@@ -80,5 +83,17 @@
 
   &.success {
     background: green;
+  }
+
+  &.error {
+    background: red;
+  }
+
+  &.info {
+    background: dodgerblue;
+  }
+
+  &.warning {
+    background: orange;
   }
 }
