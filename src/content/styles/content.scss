@@ -50,8 +50,33 @@
   padding: 1em;
   font-weight: bold;
   border-radius: 0.5em;
-  width: 30em;
+  max-width: 30em;
   z-index: 2147483647; // Max z-index value to ensure the element is always on top
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeout {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
 
   &.success {
     background: green;
