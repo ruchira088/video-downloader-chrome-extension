@@ -25,6 +25,8 @@ const initialise = () => {
       const videoDownloaderApi = await createVideoDownloaderApiWithNotifications()
       await videoDownloaderApi.scheduleVideoDownload(message.videoUrl)
     }
+
+    return true
   })
 
   setInterval(() => run(document, window.location.href), 5000)

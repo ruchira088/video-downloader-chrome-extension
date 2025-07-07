@@ -88,8 +88,6 @@ const onContextMenuClicked = (retryCount: number) => async (info: OnClickData, t
 
 const init = () => {
   chrome.runtime.onInstalled.addListener(() => {
-    chrome.contextMenus.onClicked.addListener(onContextMenuClicked(3))
-
     chrome.contextMenus.create({
       id: "download-page-url",
       title: "Download Page Video",
@@ -102,6 +100,8 @@ const init = () => {
       contexts: ["link"],
     })
   })
+
+  chrome.contextMenus.onClicked.addListener(onContextMenuClicked(3))
 }
 
 const run = async (apiServers: ApiServers) => {
