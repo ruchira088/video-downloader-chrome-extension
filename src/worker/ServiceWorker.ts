@@ -8,6 +8,7 @@ import { zodParse } from "../models/Zod"
 import { DownloadVideo } from "../models/Message"
 import Cookie = chrome.cookies.Cookie
 import Tab = chrome.tabs.Tab
+import OnClickData = chrome.contextMenus.OnClickData
 
 const initialiseServer = async (server: Server) => {
   const cookieStore = new ChromeCookieStore(server.apiUrl)
@@ -50,33 +51,44 @@ const downloadVideoFromUrl = async (videoUrl: string, tab?: Tab) => {
   }
 }
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const onContextMenuClicked = (retryCount: number) => async (info: OnClickData, tab?: Tab) => {
+  try {
+    if (info.menuItemId === "download-page-url") {
+      const videoUrl = info.pageUrl
+
+      if (videoUrl != null) {
+        await downloadVideoFromUrl(videoUrl, tab)
+      } else {
+        throw new Error(`Page URL not found: ${info}`)
+      }
+    } else if (info.menuItemId === "download-link-url") {
+      const videoUrl = info.linkUrl
+
+      if (videoUrl != null) {
+        await downloadVideoFromUrl(videoUrl, tab)
+      } else {
+        throw new Error(`Link URL not found: ${info}`)
+      }
+    } else {
+      throw new Error(`Unknown menu item clicked: ${info}`)
+    }
+  } catch (error) {
+    console.error({ info, tab, error })
+
+    if (retryCount > 0) {
+      await sleep(500)
+      await onContextMenuClicked(retryCount - 1)(info, tab)
+    } else {
+      throw error
+    }
+  }
+}
+
 const init = () => {
   chrome.runtime.onInstalled.addListener(() => {
-    chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-      try {
-        if (info.menuItemId === "download-page-url") {
-          const videoUrl = info.pageUrl
-
-          if (videoUrl != null) {
-            await downloadVideoFromUrl(videoUrl, tab)
-          } else {
-            throw new Error(`Page URL not found: ${info}`)
-          }
-        } else if (info.menuItemId === "download-link-url") {
-          const videoUrl = info.linkUrl
-
-          if (videoUrl != null) {
-            await downloadVideoFromUrl(videoUrl, tab)
-          } else {
-            throw new Error(`Link URL not found: ${info}`)
-          }
-        } else {
-          throw new Error(`Unknown menu item clicked: ${info}`)
-        }
-      } catch (error) {
-        console.error({ info, tab, error })
-      }
-    })
+    chrome.contextMenus.onClicked.addListener(onContextMenuClicked(3))
 
     chrome.contextMenus.create({
       id: "download-page-url",
