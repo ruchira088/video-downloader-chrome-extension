@@ -8,7 +8,7 @@ export class LocalStorage implements KeyValueStore<string, string> {
   get(key: string): Promise<string | null> {
     return new Promise<string | null>((resolve) => {
       this.storageArea.get(key, (result) => {
-        resolve(map(result, (result) => result[key]))
+        resolve(map(result, (result) => result[key] as string) ?? null)
       })
     })
   }
