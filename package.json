@@ -1,11 +1,11 @@
 {
   "name": "video-downloader-chrome-extension",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Chrome extension to schedule video downloads from websites",
   "author": "Ruchira (Richie) Jayasekara <me@ruchij.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack",
+    "build": "NODE_ENV=production webpack",
     "prettier": "prettier -w .",
     "deploy": "BUILD_TARGET='/Users/ruchira/Software/video-downloader-chrome-extension-build' npm run build"
   },
