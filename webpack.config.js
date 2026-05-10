@@ -16,9 +16,12 @@ console.log(`Building to ${buildTarget}`)
 
 fs.rmSync(buildTarget, { recursive: true, force: true })
 
+const isProduction = process.env.NODE_ENV === "production"
+
 module.exports = {
   mode: process.env.NODE_ENV || "development",
-  devtool: "inline-source-map",
+  devtool: isProduction ? "source-map" : "inline-source-map",
+  performance: { hints: false },
   entry: {
     content: path.resolve(__dirname, "src", "content", "Content.ts"),
     "action-page": path.resolve(__dirname, "src", "action-page", "ActionPage.tsx"),
