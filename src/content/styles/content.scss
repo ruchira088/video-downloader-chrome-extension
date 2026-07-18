@@ -1,38 +1,100 @@
 #video-downloader {
-  margin-top: 1em;
+  --vd-accent: #16a34a;
+  --vd-accent-hover: #15803d;
+  --vd-muted: #6b7280;
+  --vd-muted-tint: rgba(107, 114, 128, 0.14);
+  --vd-pending: #b45309;
+  --vd-pending-tint: rgba(217, 119, 6, 0.16);
+  --vd-completed: #15803d;
+  --vd-completed-tint: rgba(22, 163, 74, 0.14);
+  --vd-error: #dc2626;
+  --vd-error-tint: rgba(220, 38, 38, 0.14);
+  --vd-chip-text: #374151;
+  --vd-chip-bg: rgba(0, 0, 0, 0.05);
+  --vd-chip-border: rgba(0, 0, 0, 0.12);
 
-  button,
-  .message-board {
-    background-color: white;
-    color: black;
+  @media (prefers-color-scheme: dark) {
+    --vd-accent: #16a34a;
+    --vd-accent-hover: #22c55e;
+    --vd-muted: #9ba1a6;
+    --vd-muted-tint: rgba(155, 161, 166, 0.16);
+    --vd-pending: #fbbf24;
+    --vd-pending-tint: rgba(251, 191, 36, 0.16);
+    --vd-completed: #4ade80;
+    --vd-completed-tint: rgba(74, 222, 128, 0.16);
+    --vd-error: #f87171;
+    --vd-error-tint: rgba(248, 113, 113, 0.16);
+    --vd-chip-text: #d1d5db;
+    --vd-chip-bg: rgba(255, 255, 255, 0.08);
+    --vd-chip-border: rgba(255, 255, 255, 0.16);
   }
 
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1em;
+
   button {
-    border-color: black;
-    padding: 0.5em;
-    border-radius: 0.2em;
+    appearance: none;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
     cursor: not-allowed;
+    color: var(--vd-muted);
+    background-color: var(--vd-muted-tint);
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
 
     &.download {
       cursor: pointer;
-      transition: all 0.4s ease;
+      color: #ffffff;
+      background-color: var(--vd-accent);
 
       &:hover {
-        background-color: darkgray;
+        background-color: var(--vd-accent-hover);
       }
+    }
+
+    &.scheduled {
+      color: var(--vd-pending);
+      background-color: var(--vd-pending-tint);
     }
 
     &.completed {
       cursor: pointer;
+      color: var(--vd-completed);
+      background-color: var(--vd-completed-tint);
+
+      &:hover {
+        background-color: var(--vd-completed);
+        color: #ffffff;
+      }
+    }
+
+    &.error {
+      color: var(--vd-error);
+      background-color: var(--vd-error-tint);
     }
   }
 
   .message-board {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
     font-size: 12px;
-    margin-left: 1em;
-    padding: 0.5em;
-    border-radius: 0.2em;
-    border: black solid 0.25em;
+    line-height: 1.2;
+    color: var(--vd-chip-text);
+    background-color: var(--vd-chip-bg);
+    border: 1px solid var(--vd-chip-border);
   }
 }
 

@@ -167,6 +167,7 @@ export const initializeElements = async (
     await initializeDownloadButton(videoDownloaderApi, downloadSection, downloadButton, url)
   } catch (error) {
     downloadButton.textContent = "Error"
+    downloadButton.className = "error"
     downloadButton.disabled = true
 
     displayMessage(downloadSection, error?.toString() ?? "Unknown error")
