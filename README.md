@@ -1,10 +1,12 @@
 # video-downloader-chrome-extension
 
-A Chrome extension to schedule video downloads from web pages via a self-hosted [video-downloader](https://github.com/ruchira088) backend.
+A Chrome extension to schedule video downloads from web pages via a self-hosted
+[video-downloader](https://github.com/ruchira088) backend.
 
 ## Features
 
-- **Context-menu downloads** — right-click any page or link to schedule a download (`Download Page Video` / `Download Video in Link`).
+- **Context-menu downloads** — right-click any page or link to schedule a download (`Download Page Video` /
+  `Download Video in Link`).
 - **Popup action page** — a React-based UI for managing downloads, accessible from the toolbar.
 - **Production + fallback servers** — automatically falls back to a secondary server if the primary is offline.
 - **Cookie-based auth** — reuses your existing authentication cookies; no separate sign-in flow inside the extension.
@@ -14,11 +16,11 @@ A Chrome extension to schedule video downloads from web pages via a self-hosted 
 
 The extension is composed of three parts:
 
-| Component      | Entry                            | Role                                                                                                                                                 |
-| -------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Service worker | `src/worker/ServiceWorker.ts`    | Registers context menus, syncs API configurations from auth cookies into `chrome.storage.local`, and dispatches download messages to the active tab. |
-| Content script | `src/content/Content.ts`         | Runs on `https://*/*`, talks to the backend (`/schedule`, `/videos/metadata`, `/schedule/search`), and renders toast notifications.                  |
-| Action page    | `src/action-page/ActionPage.tsx` | React popup opened from the toolbar icon.                                                                                                            |
+- **Service worker** (`src/worker/ServiceWorker.ts`) — registers context menus, syncs API configurations from auth
+  cookies into `chrome.storage.local`, and dispatches download messages to the active tab.
+- **Content script** (`src/content/Content.ts`) — runs on `https://*/*`, talks to the backend (`/schedule`,
+  `/videos/metadata`, `/schedule/search`), and renders toast notifications.
+- **Action page** (`src/action-page/ActionPage.tsx`) — React popup opened from the toolbar icon.
 
 The backend it talks to is configured in `src/models/Server.ts` (default: `https://api.video.home.ruchij.com`).
 
