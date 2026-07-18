@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "prettier": "prettier -w .",
-    "prettier:check": "prettier --check ."
+    "prettier:check": "prettier --check .",
+    "deploy": "BUILD_TARGET='/Users/ruchira/Software/video-downloader-chrome-extension-build' npm run build"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
