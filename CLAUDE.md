@@ -55,5 +55,6 @@ subclass `TxxxNetworkVideoSiteHandler` instead.
   `package.json` by the CopyPlugin transform in `webpack.config.js` at build time.
 - `src/content/styles/content.scss` is emitted as `styles/content.css` (webpack asset module) and injected declaratively
   via the manifest's `content_scripts.css` — it is not JS-injected, so there is no css-loader/style-loader.
-- Version bumps are their own commit (`Bump version to X.Y.Z`); use `npm version X.Y.Z --no-git-tag-version` so
-  `package-lock.json` stays in sync.
+- Every commit must bump the version in both `package.json` and `package-lock.json` — run
+  `npm version patch --no-git-tag-version` (or `X.Y.Z` instead of `patch`) before committing so both files stay in sync,
+  and include them in the commit.

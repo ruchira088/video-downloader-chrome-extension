@@ -4,39 +4,85 @@ import { HealthStatus } from "./models/HealthStatus"
 import { ServiceInformation } from "./models/ServiceInformation"
 import { zodParse } from "../models/Zod"
 
+import "./styles/action-page.scss"
+
 type ServerState = {
   status: HealthStatus
   ping?: Duration
   serviceInformation?: ServiceInformation
 }
 
-const textDiv = (text: string): HTMLDivElement => {
-  const div = document.createElement("div")
-  div.textContent = text
-  return div
+const statusPill = (status: HealthStatus): HTMLElement => {
+  const pill = document.createElement("span")
+  pill.className = `status-pill ${status.toLowerCase()}`
+
+  const dot = document.createElement("span")
+  dot.className = "status-dot"
+
+  pill.append(dot, status)
+  return pill
+}
+
+const detailRow = (label: string, value: string, note?: string): HTMLElement => {
+  const row = document.createElement("div")
+  row.className = "detail-row"
+
+  const term = document.createElement("dt")
+  term.textContent = label
+
+  const detail = document.createElement("dd")
+  detail.textContent = value
+
+  if (note != null) {
+    const noteElement = document.createElement("span")
+    noteElement.className = "detail-note"
+    noteElement.textContent = note
+    detail.appendChild(noteElement)
+  }
+
+  row.append(term, detail)
+  return row
 }
 
 const renderServerSection = (section: HTMLElement, server: Server, state: ServerState) => {
-  const elements = [textDiv(server.label), textDiv(server.apiUrl)]
+  const header = document.createElement("header")
+  header.className = "server-header"
+
+  const identity = document.createElement("div")
+  identity.className = "server-identity"
+
+  const label = document.createElement("span")
+  label.className = "server-label"
+  label.textContent = server.label
+
+  const endpoint = document.createElement("span")
+  endpoint.className = "server-endpoint"
+  endpoint.textContent = server.apiUrl
+
+  identity.append(label, endpoint)
+  header.append(identity, statusPill(state.status))
+
+  const details = document.createElement("dl")
+  details.className = "server-details"
 
   if (state.ping != null) {
-    elements.push(textDiv(`${state.ping.toMillis()}ms`))
+    details.appendChild(detailRow("Ping", `${state.ping.toMillis()}ms`))
   }
-
-  elements.push(textDiv(state.status))
 
   if (state.serviceInformation != null) {
     const { gitBranch, gitCommit, buildTimestamp } = state.serviceInformation
 
-    elements.push(
-      textDiv(`${gitCommit} (${gitBranch})`),
-      textDiv(
-        `${buildTimestamp.toLocaleString(DateTime.DATETIME_SHORT)} (${buildTimestamp.toRelative({ base: DateTime.now() })})`,
+    details.appendChild(detailRow("Build", `${gitCommit} (${gitBranch})`))
+    details.appendChild(
+      detailRow(
+        "Built",
+        buildTimestamp.toFormat("dd/MM/yyyy, h:mm a"),
+        buildTimestamp.toRelative({ base: DateTime.now() }) ?? undefined,
       ),
     )
   }
 
-  section.replaceChildren(...elements)
+  section.replaceChildren(header, details)
 }
 
 const checkStatus = async (server: Server, state: ServerState): Promise<void> => {
@@ -59,6 +105,7 @@ const checkStatus = async (server: Server, state: ServerState): Promise<void> =>
 
 const initialiseServerSection = (root: HTMLElement, server: Server) => {
   const section = document.createElement("div")
+  section.className = "server-card"
   root.appendChild(section)
 
   const state: ServerState = { status: HealthStatus.Pending }
