@@ -58,9 +58,35 @@
       cursor: pointer;
       color: #ffffff;
       background-color: var(--vd-accent);
+      transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.1s ease;
 
       &:hover {
         background-color: var(--vd-accent-hover);
+      }
+
+      &:active {
+        transform: scale(0.96);
+      }
+    }
+
+    &.checking,
+    &.loading {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+
+      &::before {
+        content: "";
+        width: 11px;
+        height: 11px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        animation: video-downloader-spin 0.8s linear infinite;
       }
     }
 
@@ -95,61 +121,151 @@
     color: var(--vd-chip-text);
     background-color: var(--vd-chip-bg);
     border: 1px solid var(--vd-chip-border);
+    animation: video-downloader-pop-in 0.25s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button::before,
+    .message-board {
+      animation: none !important;
+    }
+
+    button.download:active {
+      transform: none;
+    }
+  }
+}
+
+@keyframes video-downloader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes video-downloader-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .toast {
-  position: fixed;
-  top: 1em;
-  right: 1em;
-  color: white !important;
-  padding: 1em;
-  font-weight: bold;
-  border-radius: 0.5em;
-  border: none;
-  max-width: 30em;
-  z-index: 2147483647; // Max z-index value to ensure the element is always on top
-  animation:
-    fadein 0.5s,
-    fadeout 0.5s 2.5s;
+  --toast-bg: #ffffff;
+  --toast-text: #1a1d21;
+  --toast-border: #e5e4e0;
+  --toast-success: #16a34a;
+  --toast-error: #dc2626;
+  --toast-info: #2563eb;
+  --toast-warning: #d97706;
 
-  @keyframes fadein {
-    from {
-      opacity: 0;
-      transform: translateX(100%);
-    }
-
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
+  @media (prefers-color-scheme: dark) {
+    --toast-bg: #1f2226;
+    --toast-text: #ecedee;
+    --toast-border: #2e3237;
+    --toast-success: #4ade80;
+    --toast-error: #f87171;
+    --toast-info: #60a5fa;
+    --toast-warning: #fbbf24;
   }
 
-  @keyframes fadeout {
-    from {
-      opacity: 1;
-      transform: translateX(0);
-    }
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px 16px;
+  max-width: 30em;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--toast-text) !important;
+  background: var(--toast-bg);
+  border: 1px solid var(--toast-border);
+  border-left: 3px solid var(--toast-accent);
+  border-radius: 10px;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 2147483647; // Max z-index value to ensure the element is always on top
+  animation:
+    toast-slide-in 0.3s cubic-bezier(0.21, 1.02, 0.73, 1),
+    toast-slide-out 0.4s ease-in 2.5s forwards;
 
-    to {
-      opacity: 0;
-      transform: translateX(100%);
-    }
+  &::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    margin-top: 5px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--toast-accent);
   }
 
   &.success {
-    background: green;
+    --toast-accent: var(--toast-success);
   }
 
   &.error {
-    background: red;
+    --toast-accent: var(--toast-error);
   }
 
   &.info {
-    background: dodgerblue;
+    --toast-accent: var(--toast-info);
   }
 
   &.warning {
-    background: orange;
+    --toast-accent: var(--toast-warning);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation:
+      toast-fade 0.2s ease,
+      toast-fade 0.2s ease-in 2.5s forwards reverse;
+  }
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes toast-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }

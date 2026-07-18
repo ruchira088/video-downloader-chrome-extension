@@ -125,6 +125,8 @@ const initializeDownloadButton = async (
     } else {
       downloadButton.onclick = async () => {
         downloadButton.disabled = true
+        downloadButton.className = "loading"
+        downloadButton.textContent = "Scheduling"
 
         await api.scheduleVideoDownload(videoUrl)
         await initializeDownloadButton(api, downloadSection, downloadButton, videoUrl)
