@@ -7,7 +7,7 @@ A Chrome extension to schedule video downloads from web pages via a self-hosted
 
 - **Context-menu downloads** — right-click any page or link to schedule a download (`Download Page Video` /
   `Download Video in Link`).
-- **Popup action page** — a React-based UI for managing downloads, accessible from the toolbar.
+- **Popup action page** — shows the health of the configured backend servers, accessible from the toolbar.
 - **Production + fallback servers** — automatically falls back to a secondary server if the primary is offline.
 - **Cookie-based auth** — reuses your existing authentication cookies; no separate sign-in flow inside the extension.
 - **Manifest V3** — uses a service worker for background tasks.
@@ -20,7 +20,7 @@ The extension is composed of three parts:
   cookies into `chrome.storage.local`, and dispatches download messages to the active tab.
 - **Content script** (`src/content/Content.ts`) — runs on `https://*/*`, talks to the backend (`/schedule`,
   `/videos/metadata`, `/schedule/search`), and renders toast notifications.
-- **Action page** (`src/action-page/ActionPage.tsx`) — React popup opened from the toolbar icon.
+- **Action page** (`src/action-page/ActionPage.ts`) — popup opened from the toolbar icon.
 
 The backend it talks to is configured in `src/models/Server.ts` (default: `https://api.video.home.ruchij.com`).
 
@@ -51,7 +51,6 @@ BUILD_TARGET=/path/to/output npm run build
 ## Tech stack
 
 - **TypeScript 6** (target: ES2020)
-- **React 19** for the popup UI
 - **Zod** for runtime schema validation of API responses and storage data
 - **Webpack 5** for bundling
 - **Chrome Extension Manifest V3**

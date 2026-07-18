@@ -21,13 +21,13 @@ module.exports = {
   performance: { hints: false },
   entry: {
     content: path.resolve(__dirname, "src", "content", "Content.ts"),
-    "action-page": path.resolve(__dirname, "src", "action-page", "ActionPage.tsx"),
+    "action-page": path.resolve(__dirname, "src", "action-page", "ActionPage.ts"),
     "service-worker": path.resolve(__dirname, "src", "worker", "ServiceWorker.ts"),
   },
   module: {
     rules: [
       {
-        test: /\.(ts|js|tsx|jsx)$/,
+        test: /\.(ts|js)$/,
         use: "ts-loader",
         exclude: /node_modules/,
       },
@@ -42,7 +42,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [".ts", ".js", ".jsx", ".tsx"],
+    extensions: [".ts", ".js"],
   },
   output: {
     filename: "[name].bundle.js",

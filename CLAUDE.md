@@ -34,8 +34,8 @@ Chrome Manifest V3 extension that schedules video downloads on a self-hosted bac
   backend calls go through `VideoDownloaderApi` (`src/content/services/VideoDownloaderApi.ts`), which reads the auth
   config from `chrome.storage.local`, health-checks `/service/info`, and fails over from `production` to `fallback`
   server (only `production` is defined in `Server.ts`).
-- **Action page** (`src/action-page/ActionPage.tsx`): React popup that polls each configured server's `/service/info`
-  and shows status/ping/version.
+- **Action page** (`src/action-page/ActionPage.ts`): toolbar popup (plain TypeScript DOM code, no framework) that polls
+  each configured server's `/service/info` and shows status/ping/version.
 
 The worker and content script share state only through `chrome.storage.local` (key defined in
 `src/kv-store/StorageKey.ts`, accessed via the `KeyValueStore` abstraction) and runtime messages (discriminated union in

@@ -17,8 +17,6 @@
     "@eslint/js": "^10.0.1",
     "@types/chrome": "^0.1.42",
     "@types/luxon": "^3.7.1",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
     "copy-webpack-plugin": "^14.0.0",
     "eslint": "^10.7.0",
     "prettier": "^3.8.3",
@@ -33,8 +31,6 @@
   "dependencies": {
     "luxon": "^3.7.2",
     "pretty-bytes": "^7.1.0",
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6",
     "zod": "^4.4.3"
   },
   "allowScripts": {
