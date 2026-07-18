@@ -1,6 +1,8 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
 
 class YouTubeVideoSiteHandler implements VideoSiteHandler {
+  readonly hostnames: string[] = ["www.youtube.com"]
+
   buttonContainer(document: Document): HTMLElement | null {
     return document.getElementById("messages")
   }

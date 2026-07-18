@@ -1,11 +1,10 @@
 import prettyBytes from "pretty-bytes"
-import { VideoSiteHandler, videoSiteHandlers } from "./handlers/VideoSiteHandler"
+import { isSupportedHost, VideoSiteHandler, videoSiteHandlers } from "./handlers/VideoSiteHandler"
 import { createVideoDownloaderApi, VideoDownloaderApi } from "./services/VideoDownloaderApi"
 
 import "./styles/content.scss"
 import LocalStorage from "../kv-store/LocalStorage"
 import { ScheduledVideoDownload, SchedulingStatus } from "./models/ScheduledVideoDownload"
-import { map } from "../helpers/TypeUtils"
 import { Message, MessageType } from "../models/Message"
 import { zodParse } from "../models/Zod"
 import { VideoMetadata } from "./models/VideoMetadata"
@@ -29,7 +28,10 @@ const initialise = () => {
     return true
   })
 
-  setInterval(() => run(document, window.location.href), 5000)
+  // Only poll the DOM on sites with a handler; the hostname cannot change without a full navigation
+  if (isSupportedHost(window.location.hostname)) {
+    setInterval(() => run(document, window.location.href), 5000)
+  }
 }
 
 const run = async (document: Document, url: string): Promise<boolean> => {
@@ -71,7 +73,7 @@ const removeDownloadSectionIfExists = (document: Document): boolean => {
   return true
 }
 
-const downloadSectionExistsForUrl = (document: Document, url: String): boolean => {
+const downloadSectionExistsForUrl = (document: Document, url: string): boolean => {
   const downloadSection: HTMLElement | null = document.getElementById(DOWNLOAD_SECTION_ID)
 
   if (downloadSection === null) {
@@ -121,9 +123,6 @@ const initializeDownloadButton = async (
       downloadButton.className = "scheduled"
       downloadButton.disabled = true
     } else {
-      const downloadIcon = chrome.runtime.getURL("images/download-icon.svg")
-      // downloadButton.style.backgroundImage = `url('${downloadIcon}')`
-
       downloadButton.onclick = async () => {
         downloadButton.disabled = true
 
@@ -143,9 +142,18 @@ const initializeDownloadButton = async (
       downloadButton.disabled = false
     }
   } catch (error) {
-    const { errorMessages } = error as { errorMessages: string[] | undefined }
+    return Promise.reject(new Error(await errorMessage(error)))
+  }
+}
 
-    return Promise.reject(new Error(map(errorMessages, (messages) => messages.join(", ")) ?? "Unknown error"))
+const errorMessage = async (error: unknown): Promise<string> => {
+  if (error instanceof Response) {
+    const body = await error.text().catch(() => "")
+    return `Received ${error.status} response from server${body !== "" ? `: ${body}` : ""}`
+  } else if (error instanceof Error) {
+    return error.message
+  } else {
+    return "Unknown error"
   }
 }
 

@@ -12,7 +12,7 @@
       "css": ["styles/content.css"]
     }
   ],
-  "permissions": ["storage", "cookies", "contextMenus", "activeTab"],
+  "permissions": ["storage", "cookies", "contextMenus", "activeTab", "alarms"],
   "host_permissions": ["*://localhost/*", "*://*.localhost/*", "*://*.ruchij.com/*"],
   "action": {
     "default_popup": "index.html"
@@ -22,11 +22,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["icons/download-icon.svg"],
-      "matches": ["https://*/*"]
-    },
-    {
-      "resources": ["icons/download-icon.svg"],
+      "resources": ["images/download-icon.svg"],
       "matches": ["https://*/*"]
     }
   ]

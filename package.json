@@ -6,23 +6,26 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=production webpack",
+    "dev": "webpack --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
     "prettier": "prettier -w .",
-    "deploy": "BUILD_TARGET='/Users/ruchira/Software/video-downloader-chrome-extension-build' npm run build"
+    "prettier:check": "prettier --check ."
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/chrome": "^0.1.42",
     "@types/luxon": "^3.7.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "copy-webpack-plugin": "^14.0.0",
-    "css-loader": "^7.1.4",
-    "file-loader": "^6.2.0",
+    "eslint": "^10.7.0",
     "prettier": "^3.8.3",
     "sass": "^1.99.0",
     "sass-loader": "^17.0.0",
-    "style-loader": "^4.0.0",
     "ts-loader": "^9.5.7",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.64.0",
     "webpack": "^5.106.2",
     "webpack-cli": "^7.0.2"
   },

@@ -14,11 +14,11 @@ A Chrome extension to schedule video downloads from web pages via a self-hosted 
 
 The extension is composed of three parts:
 
-| Component | Entry | Role |
-| --- | --- | --- |
-| Service worker | `src/worker/ServiceWorker.ts` | Registers context menus, syncs API configurations from auth cookies into `chrome.storage.local`, and dispatches download messages to the active tab. |
-| Content script | `src/content/Content.ts` | Runs on `https://*/*`, talks to the backend (`/schedule`, `/videos/metadata`, `/schedule/search`), and renders toast notifications. |
-| Action page | `src/action-page/ActionPage.tsx` | React popup opened from the toolbar icon. |
+| Component      | Entry                            | Role                                                                                                                                                 |
+| -------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service worker | `src/worker/ServiceWorker.ts`    | Registers context menus, syncs API configurations from auth cookies into `chrome.storage.local`, and dispatches download messages to the active tab. |
+| Content script | `src/content/Content.ts`         | Runs on `https://*/*`, talks to the backend (`/schedule`, `/videos/metadata`, `/schedule/search`), and renders toast notifications.                  |
+| Action page    | `src/action-page/ActionPage.tsx` | React popup opened from the toolbar icon.                                                                                                            |
 
 The backend it talks to is configured in `src/models/Server.ts` (default: `https://api.video.home.ruchij.com`).
 
@@ -33,7 +33,11 @@ The backend it talks to is configured in `src/models/Server.ts` (default: `https
 ```bash
 npm install            # install dependencies
 npm run build          # production build → ./build
+npm run dev            # development build in watch mode
+npm run typecheck      # type-check without emitting
+npm run lint           # lint with ESLint
 npm run prettier       # format with Prettier
+npm run prettier:check # check formatting without writing
 ```
 
 To deploy to a custom output directory, set `BUILD_TARGET`:

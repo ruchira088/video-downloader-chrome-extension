@@ -1,6 +1,8 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
 
 class XHamsterVideoSiteHandler implements VideoSiteHandler {
+  readonly hostnames: string[] = ["xhamster.com"]
+
   buttonContainer(document: Document): HTMLElement | null {
     return document.querySelector(".controls")
   }

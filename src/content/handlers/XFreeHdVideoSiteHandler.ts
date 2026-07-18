@@ -1,6 +1,8 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
 
 class XFreeHdVideoSiteHandler implements VideoSiteHandler {
+  readonly hostnames: string[] = ["www.xfreehd.com"]
+
   buttonContainer(document: Document): HTMLElement | null {
     return this.videoPlayer(document)
   }

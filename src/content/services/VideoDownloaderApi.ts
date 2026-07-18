@@ -88,7 +88,7 @@ class VideoDownloaderApiImpl implements VideoDownloaderApi {
     if (response.ok) {
       return zodParse(VideoMetadata, body)
     } else {
-      return Promise.reject(new Error(`Received non-OK response from server: ${body}`))
+      return Promise.reject(new Error(`Received non-OK response from server: ${JSON.stringify(body)}`))
     }
   }
 

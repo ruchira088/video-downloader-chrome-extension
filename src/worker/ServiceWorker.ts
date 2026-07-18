@@ -23,7 +23,7 @@ const initialiseServer = async (server: Server) => {
 
   const apiConfigurationsString: string | null = await localStorage.get(StorageKey.ApiConfigurations)
 
-  const existingApiConfigurations: ApiConfigurations | {} =
+  const existingApiConfigurations: ApiConfigurations =
     map(
       filter(apiConfigurationsString, (value) => value?.trim() !== ""),
       (stringValue) => zodParse(ApiConfigurations, JSON.parse(stringValue)),
@@ -86,6 +86,8 @@ const onContextMenuClicked = (retryCount: number) => async (info: OnClickData, t
   }
 }
 
+const SYNC_API_CONFIG_ALARM = "sync-api-config"
+
 const init = () => {
   chrome.runtime.onInstalled.addListener(() => {
     chrome.contextMenus.create({
@@ -102,6 +104,15 @@ const init = () => {
   })
 
   chrome.contextMenus.onClicked.addListener(onContextMenuClicked(3))
+
+  // setInterval does not survive MV3 service worker suspension; alarms do
+  chrome.alarms.create(SYNC_API_CONFIG_ALARM, { periodInMinutes: 0.5 })
+
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === SYNC_API_CONFIG_ALARM) {
+      run(API_SERVERS)
+    }
+  })
 }
 
 const run = async (apiServers: ApiServers) => {
@@ -113,4 +124,4 @@ const run = async (apiServers: ApiServers) => {
 }
 
 init()
-setInterval(() => run(API_SERVERS), 30_000)
+run(API_SERVERS)

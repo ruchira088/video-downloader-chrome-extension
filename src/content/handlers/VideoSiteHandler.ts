@@ -15,6 +15,8 @@ import sxyPrnVideoSiteHandler from "./SxyPrnVideoSiteHandler"
 import freshPornoVideoSiteHandler from "./FreshPornoVideoSiteHandler"
 
 export interface VideoSiteHandler {
+  hostnames: string[]
+
   isMatch: (url: URL) => boolean
 
   isVideoPage: (document: Document) => boolean
@@ -37,3 +39,6 @@ export const videoSiteHandlers: VideoSiteHandler[] = [
   sxyPrnVideoSiteHandler,
   freshPornoVideoSiteHandler,
 ]
+
+export const isSupportedHost = (hostname: string): boolean =>
+  videoSiteHandlers.some((videoSiteHandler) => videoSiteHandler.hostnames.includes(hostname))

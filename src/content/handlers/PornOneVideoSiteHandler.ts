@@ -2,6 +2,8 @@ import { VideoSiteHandler } from "./VideoSiteHandler"
 import { map } from "../../helpers/TypeUtils"
 
 class PornOneVideoSiteHandler implements VideoSiteHandler {
+  readonly hostnames: string[] = ["pornone.com"]
+
   buttonContainer(document: Document): HTMLElement | null {
     return map(this.videoPlayer(document), (element) => element.parentElement) ?? null
   }
