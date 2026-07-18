@@ -1,5 +1,4 @@
 const path = require("path")
-const fs = require("fs")
 const CopyPlugin = require("copy-webpack-plugin")
 const packageJson = require("./package.json")
 
@@ -13,8 +12,6 @@ const manifestFile = (json) => ({
 const buildTarget = process.env.BUILD_TARGET ?? path.resolve(__dirname, "build")
 
 console.log(`Building to ${buildTarget}`)
-
-fs.rmSync(buildTarget, { recursive: true, force: true })
 
 const isProduction = process.env.NODE_ENV === "production"
 
@@ -36,26 +33,22 @@ module.exports = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              outputPath: "styles/",
-              name: "[name].css",
-            },
-          },
-          "sass-loader",
-        ],
+        type: "asset/resource",
+        generator: {
+          filename: "styles/[name].css",
+        },
+        use: ["sass-loader"],
       },
     ],
   },
   resolve: {
-    extensions: [".ts", ".js", "jsx", ".tsx"],
+    extensions: [".ts", ".js", ".jsx", ".tsx"],
   },
   output: {
     filename: "[name].bundle.js",
     path: buildTarget,
     publicPath: "",
+    clean: true,
   },
   plugins: [
     new CopyPlugin({

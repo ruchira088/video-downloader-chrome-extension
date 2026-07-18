@@ -1,6 +1,8 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
 
 class SxyPrnVideoSiteHandler implements VideoSiteHandler {
+  readonly hostnames: string[] = ["sxyprn.com"]
+
   buttonContainer(document: Document): HTMLElement | null {
     return this.videoPlayer(document)
   }

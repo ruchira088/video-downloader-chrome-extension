@@ -1,6 +1,8 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
 
 class FreshPornoVideoSiteHandler implements VideoSiteHandler {
+  readonly hostnames: string[] = ["freshporno.net"]
+
   buttonContainer(document: Document): HTMLElement | null {
     return document.querySelector(".video-info .title-holder")
   }

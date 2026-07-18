@@ -1,6 +1,8 @@
 import { VideoSiteHandler } from "./VideoSiteHandler"
 
 class EPornerVideoSiteHandler implements VideoSiteHandler {
+  readonly hostnames: string[] = ["www.eporner.com"]
+
   buttonContainer(document: Document): HTMLElement | null {
     return this.videoPlayer(document)
   }

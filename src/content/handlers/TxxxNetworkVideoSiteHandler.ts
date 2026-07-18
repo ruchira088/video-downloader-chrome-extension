@@ -5,6 +5,10 @@ abstract class TxxxNetworkVideoSiteHandler implements VideoSiteHandler {
 
   abstract readonly containerCss: string
 
+  get hostnames(): string[] {
+    return [this.hostname]
+  }
+
   buttonContainer(document: Document): HTMLElement | null {
     return document.querySelector(this.containerCss)
   }
