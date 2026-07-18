@@ -11,7 +11,7 @@ import { zodParse } from "../models/Zod"
 import { VideoMetadata } from "./models/VideoMetadata"
 
 const DOWNLOAD_SECTION_ID = "video-downloader"
-const FRONT_END_URL = "https://video.home.ruchij.com"
+const FRONT_END_URL = "https://videos.ruchij.com"
 
 const initialise = () => {
   console.debug("Initializing content script for video downloader")
