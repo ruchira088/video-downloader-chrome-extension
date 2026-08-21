@@ -27,8 +27,17 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test
+        run: npm test
+
       - name: Check formatting
         run: npm run prettier:check
 
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
+
       - name: Build
         run: npm run build
+
+      - name: Verify build output
+        run: npm run verify:build

@@ -34,10 +34,13 @@ The backend it talks to is configured in `src/models/Server.ts` (default: `https
 
 ```bash
 npm install            # install dependencies
-npm run build          # production build → ./build
-npm run dev            # development build in watch mode
+npm run build          # production build (tsc → .tsbuild, then webpack → ./build)
+npm run verify:build   # verify ./build is a loadable extension
+npm run dev            # watch mode (type-checks and rebuilds on change)
 npm run typecheck      # type-check without emitting
-npm run lint           # lint with ESLint
+npm test               # run the test suite once
+npm run test:watch     # run the test suite in watch mode
+npm run lint           # lint with oxlint
 npm run prettier       # format with Prettier
 npm run prettier:check # check formatting without writing
 ```
@@ -50,8 +53,10 @@ BUILD_TARGET=/path/to/output npm run build
 
 ## Tech stack
 
-- **TypeScript 6** (target: ES2020)
+- **TypeScript 7** (target: ES2020)
 - **Zod** for runtime schema validation of API responses and storage data
+- **Vitest** + happy-dom for tests
+- **oxlint** for linting, **Prettier** for formatting
 - **Webpack 5** for bundling
 - **Chrome Extension Manifest V3**
 

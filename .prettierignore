@@ -1,4 +1,5 @@
 /build
+/.tsbuild
 /node_modules
 
 /.idea
