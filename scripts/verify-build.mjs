@@ -95,11 +95,15 @@ for (const [index, entry] of (manifest.web_accessible_resources ?? []).entries()
 
 /* --------------------------------------------------------------- popup HTML */
 
-// The popup is plain HTML copied as-is, so its <script src> / <link href> are unchecked by webpack.
+// The popup is plain HTML copied as-is, so its <script src> / <link href> are unchecked by webpack. In production
+// webpack (>= 5.110) also minifies the copy, which strips the attribute quotes — so accept double-, single- and
+// unquoted values.
 if (manifest.action?.default_popup && fileSize(manifest.action.default_popup) !== null) {
   const popupPath = manifest.action.default_popup
   const html = readFileSync(join(buildDir, popupPath), "utf8")
-  const references = [...html.matchAll(/(?:src|href)\s*=\s*"([^"]+)"/g)].map(([, reference]) => reference)
+  const references = [...html.matchAll(/(?:src|href)\s*=\s*(?:"([^"]+)"|'([^']+)'|([^\s"'=<>`]+))/g)].map(
+    ([, doubleQuoted, singleQuoted, unquoted]) => doubleQuoted ?? singleQuoted ?? unquoted,
+  )
 
   const localReferences = references.filter(
     (reference) => !/^(?:[a-z]+:)?\/\//i.test(reference) && !reference.startsWith("data:") && reference !== "#",

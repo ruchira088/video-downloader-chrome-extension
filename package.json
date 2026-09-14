@@ -1,6 +1,6 @@
 {
   "name": "video-downloader-chrome-extension",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Chrome extension to schedule video downloads from websites",
   "author": "Ruchira (Richie) Jayasekara <me@ruchij.com>",
   "license": "MIT",
@@ -17,23 +17,23 @@
     "deploy": "BUILD_TARGET='/Users/ruchira/Software/video-downloader-chrome-extension-build' npm run build"
   },
   "devDependencies": {
-    "@types/chrome": "^0.2.6",
-    "@types/luxon": "^3.7.4",
+    "@types/chrome": "^0.2.9",
+    "@types/luxon": "^3.7.5",
     "copy-webpack-plugin": "^14.0.0",
-    "happy-dom": "^20.11.6",
-    "oxlint": "^1.79.0",
+    "happy-dom": "^20.14.5",
+    "oxlint": "^1.82.0",
     "prettier": "^3.9.6",
-    "sass": "^1.103.1",
-    "sass-loader": "^17.0.0",
+    "sass": "^1.104.1",
+    "sass-loader": "^17.0.1",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.11",
-    "webpack": "^5.109.2",
-    "webpack-cli": "^7.2.2"
+    "vitest": "^5.0.0",
+    "webpack": "^5.110.3",
+    "webpack-cli": "^7.2.3"
   },
   "dependencies": {
     "luxon": "^3.7.2",
-    "pretty-bytes": "^7.1.0",
-    "zod": "^4.4.3"
+    "pretty-bytes": "^7.1.3",
+    "zod": "^4.6.5"
   },
   "allowScripts": {
     "fsevents": false,
