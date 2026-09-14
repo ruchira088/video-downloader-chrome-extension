@@ -1,6 +1,6 @@
 {
   "name": "video-downloader-chrome-extension",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Chrome extension to schedule video downloads from websites",
   "author": "Ruchira (Richie) Jayasekara <me@ruchij.com>",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "sass-loader": "^17.0.1",
     "typescript": "^7.0.2",
     "vitest": "^5.0.0",
-    "webpack": "^5.110.3",
+    "webpack": "^5.111.0",
     "webpack-cli": "^7.2.3"
   },
   "dependencies": {
